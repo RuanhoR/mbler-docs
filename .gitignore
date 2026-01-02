@@ -1,7 +1,5 @@
 # Nodejs
 node_modules/
-/dist
-/lib/data/path.db
 dist
-lib/data/cache
 .npmrc
+cache

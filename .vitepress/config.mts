@@ -1,29 +1,44 @@
-import { defineConfig } from 'vitepress'
-
-// https://vitepress.dev/reference/site-config
-export default defineConfig({
-  title: "mbler docs",
-  description: "docs of github@RuanhoR/mbler",
+export default {
+  title: 'Mbler Docs',
+  description: 'Mbler Docs',
   themeConfig: {
-    // https://vitepress.dev/reference/default-theme-config
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Examples', link: '/markdown-examples' }
-    ],
-
-    sidebar: [
+    nav: [{
+        text: '中文',
+        link: '/zh'
+      },
       {
-        text: 'Examples',
-        items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
+        text: 'English',
+        link: '/en'
       }
     ],
 
-    socialLinks: [
-      { text: "驱动", icon: 'github', link: 'https://github.com/vuejs/vitepress' },
-      { icon: 'github', link: 'https://github.com/' }
-    ]
+    sidebar: [{
+      text: '中文',
+      items: [{
+          text: '开始',
+          link: '/zh/start'
+        },
+        {
+          text: 'API 文档',
+          link: '/zh/api/'
+        }
+      ]
+    }, {
+      text: 'English',
+      items: [{
+          text: 'Getting started',
+          link: '/en/start'
+        },
+        {
+          text: 'API Docs',
+          link: '/en/api/'
+        }
+      ]
+    }],
+
+    socialLinks: [{
+      icon: 'github',
+      link: 'https://github.com/vuejs/vitepress'
+    }]
   }
-})
+}
