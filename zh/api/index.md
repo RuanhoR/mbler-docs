@@ -2,45 +2,7 @@
 layout: home
 hero:
   name: mbler 文档
-  text: github@RuanhoR/mbler 文档
-  tagline: Mbler是一款Minecraft基岩版附加包开发工具
-  actions:
-    - theme: brand
-      text: start using
-      link: /zh/start
-    - theme: alt
-      text: Api
-      link: /zh/api/index
 ---
-
-# 介绍
-一个针对Minecraft JavaScript API 的nodejs包，让你的附加包版本管理更简单
-# 安装
-确保你已经安装以下工具：
-- Node.js 与 npm
-- Git
-```bash
-git clone https://gitee.com/n304sc-haoran/mbler.git
-cd mbler
-npm install 
-npm link  # 若失败，请运行 bash install.sh
-```
-
-安装成功后，你可以直接使用：
-```bash
-# 获取版本
-mbler -v
-```
-初始化目录配置文件
-```bash
-mbler -c <项目路径>
-mbler init
-```  
-** 详细请看 :  [文档](/zh/api/index) **
-
-### 发布平台
-[github](https://github.com/RuanhoR/mbler)<br>
-[gitee](https://gitee.com/n304sc-haoran/mbler)
 
 # Mbler 使用教程
 
@@ -61,4 +23,10 @@ npm link
 mbler -v
 ```
 
-#
+# 下一步
+建议依次学习
+ - [命令行(cli)用法](./cli)  
+ - [创建项目](./create-project)  
+ - [创建依赖](./create-des)  
+ - [实现性: mcx语法](./mcx)
+ - [内部实现](./internal/)
