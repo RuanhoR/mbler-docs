@@ -29,5 +29,5 @@ mbler init
  详细请看 :  [文档](/zh/api/index) 
 
 ### 发布平台
-[github](https://github.com/RuanhoR/mbler)<br>
+[github](https://github.com/RuanhoR/mbler)  
 [gitee](https://gitee.com/n304sc-haoran/mbler)

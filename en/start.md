@@ -30,5 +30,5 @@ mber init
  For more details, see: [Documentation](/en/api/index) 
 
 # Release Platforms
-[github](https://github.com/RuanhoR/mbler)<br>
+[github](https://github.com/RuanhoR/mbler)  
 [gitee](https://gitee.com/n304sc-haoran/mbler)

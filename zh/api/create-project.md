@@ -58,7 +58,7 @@ git pull
 ### 切换工作目录（-c）
 将 mbler 的工作目录切换到指定路径（支持相对或绝对路径）：
 ```bash
-mbler -c <目标目录路径>
+mbler -c [目标目录路径]
 ```
 示例：
 ```bash
@@ -88,7 +88,8 @@ mbler init
 ### 配置说明（示例 mbler.config.json）
 下面是一个示例（注意：JSON 不带行内注释）：
 
-```json
+
+```json5
 {
   "name": "test",
   "description": "示例项目",
@@ -110,9 +111,11 @@ mbler init
     "resources": "/path/to/resources-output",
     "behavior": "/path/to/behavior-oitput",
     "dist": "./dist/dist.mcaddon"
+    
   }
 }
 ```
+
 
 字段说明
 - name: 项目名称。
@@ -139,19 +142,19 @@ mbler init
 ## 关于依赖（install / add / remove）
 - 从指定来源安装依赖（例如 git 或本地路径）：
 ```bash
-mbler install <git-or-local-path>
+mbler install [git-or-local-path]
 ```
 - 在工作目录中添加已知依赖（package 名称）：
 ```bash
-mbler add <package-name>
+mbler add [package-name]
 ```
 - 删除工作目录中的依赖：
 ```bash
-mbler remove <package-name>
+mbler remove [package-name]
 ```
 
 ## 创建自定义依赖
-- 如需创建一个可被 mbler 管理的依赖包，详见 (创建依赖)[create-des.md]（仓库内链接）。
+- 如需创建一个可被 mbler 管理的依赖包，详见 [创建依赖](create-des.md)（仓库内链接）。
 
 package.json 与构建说明
 - 项目目录下会存在 package.json，用于 npm 识别，但在本地开发时通常不需要你运行全局 npm install。

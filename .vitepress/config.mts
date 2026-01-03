@@ -13,7 +13,10 @@ export default {
     ],
     socialLinks: [{
       icon: 'github',
-      link: 'https://github.com/vuejs/vitepress'
+      link: 'https://github.com/RuanhoR/mbler'
     }]
+  },
+  markdown: {
+    html: false
   }
 }
