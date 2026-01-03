@@ -21,17 +21,17 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build project
-        run: npm run build
+        run: npm run docs:build
       - name: Zip dist folder
-        run: zip -r dist.zip dist/
+        run: cd .vitepress/dist/ && zip -r dist.zip ./
       - name: Release to GitHub Releases
         uses: softprops/action-gh-release@v1
         with:
           files: dist.zip
           tag_name: ${{ steps.extract_tag.outputs.TAG_NAME }}
-          name: mbler ${{ steps.extract_tag.outputs.TAG_NAME }}
+          name: mbler-docs ${{ steps.extract_tag.outputs.TAG_NAME }}
           body: |
-            # mbler 发布版
+            # mbler-docs 发布版
             提交信息 ：
               > ${{ github.event.head_commit.message }}
             文件列表 ：
