@@ -9,6 +9,10 @@ export default {
       {
         text: 'English',
         link: '/en'
+      },
+      {
+        text: "首页",
+        link: "/"
       }
     ],
     socialLinks: [{

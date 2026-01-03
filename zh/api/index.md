@@ -28,5 +28,5 @@ mbler -v
  - [命令行(cli)用法](./cli)  
  - [创建项目](./create-project)  
  - [创建依赖](./create-des)  
- - [实现性: mcx语法](./mcx)
+ - [实验性: mcx语法](./mcx)
  - [内部实现](./internal/)
