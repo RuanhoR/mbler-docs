@@ -85,3 +85,5 @@ mbler dev
 - npm link 相关：执行 `npm link` 后，请确认全局 npm bin 在系统 PATH 中。Linux/macOS 可用 `which mbler` 确认，Windows 可用 `where mbler`。
 - 命令上下文：多数命令（如 build、add、remove、version）依赖当前工作目录（checkout 的指向），确保使用前先`mbler -c ./`绑定工作目录一下。
 - web_edit 为实验性功能
+# 下一步
+[创建项目](./create-project.md)

@@ -9,6 +9,6 @@ hero:
       text: 开始使用
       link: /zh/start
     - theme: alt
-      text: Api文档
+      text: 使用文档
       link: /zh/api/index
 ---

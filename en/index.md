@@ -9,6 +9,6 @@ hero:
       text: start using
       link: /en/start
     - theme: alt
-      text: Api
+      text: Other Docs
       link: /en/api/index
 ---

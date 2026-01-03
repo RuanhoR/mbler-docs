@@ -2,9 +2,9 @@
   "name": "mbler-docs",
   "version": "0.0.2",
   "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "docs:dev": "pnpm vitepress dev",
+    "docs:build": "pnpm vitepress build",
+    "docs:preview": "pnpm vitepress preview"
   },
   "devDependencies": {
     "vitepress": "^1.6.4"
