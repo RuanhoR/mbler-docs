@@ -7,7 +7,6 @@
     "docs:preview": "pnpm vitepress preview"
   },
   "devDependencies": {
-    "@vue/devtools-api": "^8.0.5",
-    "@vueuse/core": "^14.1.0"
+    "vitepress": "^1.0.0"
   }
 }

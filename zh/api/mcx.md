@@ -58,4 +58,4 @@ component.mcx
   })
 </script>
 ```
-这是一个示例mcx项目，当然还未实现mcx，欢迎代码贡献（mcx在mbler源码目录 `lib/mcx` ）  
+这是一个示例mcx项目，当然还未实现mcx，欢迎代码贡献（mcx在mbler源码目录 `src/mcx` ）  

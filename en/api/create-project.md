@@ -9,46 +9,6 @@
 - Git is installed and working properly.
 - If you want to run the repository code directly, you need to clone the project; If the repository has an image (for example, Gitee), you can choose it as needed.
 
-## Get the code
-GitHub repositories are recommended:
-```bash
-git clone https://github.com/RuanhoR/mbler.git
-cd mbler
-```
-Repositories can also use Gitee clones or github reviewers, which may be faster
-For example, gh-proxy github image
-```bash
-git clone https://gh-proxy.com/https://github.com/RuanhoR/mbler.git
-cd mbler
-```
-gitee image
-```bash
-git clone https://gitee.com/n304sc-haoran/mbler.git
-cd mbler
-```
-
-## Installation and Operation (Development Phase)
-There are two common ways to run mbler locally:
-
-1) Run directly with Node (quick debugging)
-```bash
-node index.js
-```
-
-2) Global linking (recommended for frequent use of command-line tools)
-Run at the repository root:
-```bash
-npm link
-```
-This command links the local package to a global command (mbler can be used directly in other directories). If npm link doesn't work, you can try running the script provided by the repository:
-```bash
-bash install.sh
-```
-
-Updating the repository (getting the latest features)
-```bash
-git pull
-```
 ## Eat
 
 ### Creating a Project (Initialization)

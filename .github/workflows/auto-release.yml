@@ -2,7 +2,8 @@ name: Release on Tag
 permissions:
   contents: write
 on:
-  push
+  push:
+    tag: "v*"
 jobs:
   build-and-release:
     name: Build and Release
