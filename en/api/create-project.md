@@ -5,11 +5,10 @@
 - Description: The JSON standard does not allow comments, and the JSON example demonstrated in the document has been removed. If you want to keep the instructions during editing, use the README or a separate comment file.
 
 ## Pre-front
-- Node.js (including npm) is installed.
-- Git is installed and working properly.
-- If you want to run the repository code directly, you need to clone the project; If the repository has an image (for example, Gitee), you can choose it as needed.
-
-## Eat
+Recommended to use the GitHub repository: 
+Download a version from [here](https://github.com/RuanhoR/mbler/releases), navigate to this directory (use the command line cd), and run `npm link`. 
+You can also use the Gitee clone link or a GitHub mirror site, which might be faster. 
+This project has currently migrated to `typescript`, and you can also directly run `tsc` to build.
 
 ### Creating a Project (Initialization)
 - Create a new folder in the directory where you want to create the project, or run the initialization command directly in the current directory.
