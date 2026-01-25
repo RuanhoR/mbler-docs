@@ -1,19 +1,15 @@
-# Experimental: mcx Syntax
+# mbler mcx
 
-mcx allows your MCBE behavior packs to avoid complex JSONs for items, recipes, etc., and also lets your event registration bypass cumbersome native and obscure method names. 
-Let's look at the effect.
+The mcx is a beta feature.
 
-Set `script.main` in `mbler.config.json` to `index.js` (optional), then in the `ascripts` folder of the BP:
-
+examples:
 index.js
 ```javascript
-import App from "./app.mcx";
-import * as Server from "@minecraft/server";
-import * as ScriptUi from "@minecraft/server-ui";
-import { createApp } from "@mbler/mcx";
-createApp(App).mout(Server, ScriptUi);
+import { createApp } from "mcx"
+import {world} from "@minecraft/server"
+import App from "./app.mcx"
+createApp(App, world)
 ```
-
 app.mcx
 ```
 <script>
