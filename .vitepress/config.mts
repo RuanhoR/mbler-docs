@@ -27,7 +27,7 @@ export const sidebar: ThemeConfig['sidebar'] = {
       {
         text: "Project structure",
         link: "/guide/init#structure"
-      }
+      }]
     },
     {
       text: "Beta",
