@@ -85,5 +85,3 @@ Other Notes and FAQs
 - npm link related: After executing `npm link`, make sure that the global npm bin is in the system PATH. Linux/macOS can be confirmed with `which mbler` and Windows can be confirmed with 'where mbler'.
 - Command context: Most commands (such as build, add, remove, version) rely on the current working directory (checkout point), make sure to bind the working directory to `mbler -c ./` before using it.
 - web_edit is an experimental feature
-# Next Step
-[Create Project](./create-project.md)
