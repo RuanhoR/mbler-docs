@@ -6,8 +6,8 @@
 ## install
 It is based on nodejs and typescript. so you can't directly use to clone a git repository.  
  - From github: You should go to [this page](https://github.com/RuanhoR/mbler/releases), select latest, click `dist.zip` and download it
- - [download](/public/mbler-dist-0.1.1.zip)
-
+ - [download](/public/mbler-dist-0.1.1.zip)  
+ - From npm: `npm install -g mbler`  
 Then, unzip this zip.(if you is windows user, plase use a tool like 7-zip) Open it with the terminal.
 
 In unzip folder, to the dist folder.

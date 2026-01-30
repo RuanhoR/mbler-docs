@@ -3,28 +3,46 @@ import type {
 } from '@vue/theme'
 export const sidebar: ThemeConfig['sidebar'] = {
   '/guide/': [{
-    text: 'Getting Started',
-    items: [{
-        text: 'Introduction',
-        link: '/guide/introduction'
+      text: 'Getting Started',
+      items: [{
+          text: 'Introduction',
+          link: '/guide/introduction'
+        },
+        {
+          text: 'Quick Start',
+          link: '/guide/quick-start'
+        },
+      ]
+    },
+    {
+      text: "Command",
+      link: "/guide/cli"
+    },
+    {
+      text: "Make a package",
+      items: [{
+        text: "Project",
+        link: "/guide/init"
       },
       {
-        text: 'Quick Start',
-        link: '/guide/quick-start'
-      },
-      {
-        text: "Command",
-        link: "./guide/cli"
+        text: "Project structure",
+        link: "/guide/init#structure"
       }
-    ]
-  }],
+    },
+    {
+      text: "Beta",
+      items: [{
+        text: "mcx",
+        link: "/guide/mcx"
+      }]
+    }
+  ],
   '/examples/': [{
     text: 'Basic',
     items: [{
-        text: 'Hello World',
-        link: '/examples/hello-world'
-      }
-    ]
+      text: 'Hello World',
+      link: '/examples/hello-world'
+    }]
   }]
 }
 const nav: ThemeConfig['nav'] = [{
@@ -40,12 +58,12 @@ const nav: ThemeConfig['nav'] = [{
       },
       {
         text: "Overview",
-        link: "./guide/introduction"
+        link: "/guide/introduction"
       }
     ]
   },
   {
-    text: "lang / 切换语言",
+    text: "lang",
     items: [{
         text: "中文",
         link: "https://zh.mbler-docs.ruanhor.dpdns.org"
