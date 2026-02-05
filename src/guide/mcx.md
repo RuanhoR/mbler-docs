@@ -59,4 +59,5 @@ export.subscribe = new ItemComponent({
 </script>
 ```
 
-This is a sample mcx project. mcx itself hasn’t been fully implemented yet, contributions are welcome (mcx is in the `src/mcx` directory of the mbler source code).
+This is a sample mcx project. mcx itself hasn’t been fully implemented yet, contributions are welcome  
+[repo](https://github.com/RuanhoR/mcx-core)。.
