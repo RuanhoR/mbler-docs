@@ -3,81 +3,66 @@ import type {
 } from '@vue/theme'
 export const sidebar: ThemeConfig['sidebar'] = {
   '/guide/': [{
-      text: 'Getting Started',
+      text: 'Tutorials',
       items: [{
           text: 'Introduction',
           link: '/guide/introduction'
         },
         {
-          text: 'Quick Start',
+          text: 'Get Started',
           link: '/guide/quick-start'
         },
+        {
+          text: 'Command Usage',
+          link: '/guide/cli'
+        },
+        {
+          text: 'Create Projects with Mcx (Beta)',
+          link: '/guide/mcx'
+        }
       ]
     },
     {
-      text: "Command",
-      link: "/guide/cli"
-    },
-    {
-      text: "Make a package",
+      text: 'Internal Implementation',
       items: [{
-        text: "Project",
-        link: "/guide/init"
-      },
-      {
-        text: "Project structure",
-        link: "/guide/init#structure"
-      }]
-    },
-    {
-      text: "Beta",
-      items: [{
-        text: "mcx",
-        link: "/guide/mcx"
+        text: 'Mbler',
+        link: '/guide/internal/mbler'
+      }, {
+        text: 'Mcx',
+        link: '/guide/internal/mcx'
       }]
     }
-  ],
-  '/examples/': [{
-    text: 'Basic',
-    items: [{
-      text: 'Hello World',
-      link: '/examples/hello-world'
-    }]
-  }]
+  ]
 }
 const nav: ThemeConfig['nav'] = [{
-    text: 'Docs',
+    text: 'Documentation',
     activeMatch: `^/(guide|examples)/`,
     items: [{
-        text: 'Examples',
-        link: '/examples/hello-world'
-      },
-      {
-        text: 'Quick Start',
+        text: 'Get Started',
         link: '/guide/quick-start'
       },
       {
-        text: "Overview",
-        link: "/guide/introduction"
+        text: 'Introduction',
+        link: '/guide/introduction'
       }
     ]
   },
   {
-    text: "lang",
+    text: 'Language',
     items: [{
-        text: "中文",
+        text: 'Chinese',
         link: "https://zh.mbler-docs.ruanhor.dpdns.org"
       },
       {
-        text: "English",
+        text: 'English',
         link: "https://mbler-docs.ruanhor.dpdns.org"
       }
     ]
   }
-]
+}]
 export default {
   title: 'Mbler Docs',
-  description: 'Mbler Docs',
+  description: 'Mbler Documentation',
   srcDir: "src",
   themeConfig: {
     footer: {
