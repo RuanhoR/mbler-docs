@@ -1,16 +1,22 @@
 import type {
   Config as ThemeConfig
-} from '@vue/theme'
+} from '@vue/theme';
 export const sidebar: ThemeConfig['sidebar'] = {
-  '/guide/': [{
+  '/guide/': [
+    {
       text: 'Tutorials',
-      items: [{
+      items: [
+        {
           text: 'Introduction',
           link: '/guide/introduction'
         },
         {
           text: 'Get Started',
           link: '/guide/quick-start'
+        },
+        {
+          text: 'Project Structure',
+          link: '/guide/project'
         },
         {
           text: 'Command Usage',
@@ -24,20 +30,25 @@ export const sidebar: ThemeConfig['sidebar'] = {
     },
     {
       text: 'Internal Implementation',
-      items: [{
-        text: 'Mbler',
-        link: '/guide/internal/mbler'
-      }, {
-        text: 'Mcx',
-        link: '/guide/internal/mcx'
-      }]
+      items: [
+        {
+          text: 'Mbler',
+          link: '/guide/internal/mbler'
+        },
+        {
+          text: 'Mcx',
+          link: '/guide/internal/mcx'
+        }
+      ]
     }
   ]
-}
-const nav: ThemeConfig['nav'] = [{
+};
+const nav: ThemeConfig['nav'] = [
+  {
     text: 'Documentation',
     activeMatch: `^/(guide|examples)/`,
-    items: [{
+    items: [
+      {
         text: 'Get Started',
         link: '/guide/quick-start'
       },
@@ -49,7 +60,8 @@ const nav: ThemeConfig['nav'] = [{
   },
   {
     text: 'Language',
-    items: [{
+    items: [
+      {
         text: 'Chinese',
         link: "https://zh.mbler-docs.ruanhor.dpdns.org"
       },
@@ -59,10 +71,10 @@ const nav: ThemeConfig['nav'] = [{
       }
     ]
   }
-}]
+];
 export default {
   title: 'Mbler Docs',
-  description: 'Mbler Documentation',
+  description: 'Mbler Docs',
   srcDir: "src",
   themeConfig: {
     footer: {
@@ -73,12 +85,14 @@ export default {
     },
     nav,
     sidebar,
-    socialLinks: [{
-      icon: 'github',
-      link: 'https://github.com/RuanhoR/mbler'
-    }]
-  },
-  markdown: {
-    html: false
+    socialLinks: [
+      {
+        icon: 'github',
+        link: 'https://github.com/RuanhoR/mbler'
+      }
+    ],
+    markdown: {
+      html: false
+    }
   }
-}
+};
