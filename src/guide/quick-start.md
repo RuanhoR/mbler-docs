@@ -40,14 +40,13 @@ Initialize GIT Repository? (y/n): y
 Using the Beta API? (y/n): y
 ```
 A file will be generated
- - ![folder](/static/folder.svg) `behavior`
- - ![folder](/static/folder.svg) `node_modules`
- - ![yaml](/static/yaml_file.svg) `pnpm-lock.yaml`
- - ![jaon](/static/json_file.svg) `tsconfig.json` (only the language entered is ts or mcx)
- - ![jaon](/static/json_file.svg) `mbler.config.json`
- - ![jaon](/static/json_file.svg) `package.json`
- - ![folder](/static/folder.svg) `resources`
-
+- <img style="width: 50px;height:50px" src="/static/folder.svg"> `behavior`
+ - <img style="width: 50px;height:50px" src="/static/folder.svg"> `node_modules`
+ - <img style="width: 50px;height:50px" src="/static/yaml_file.svg"> `pnpm-lock.yaml`
+ - <img style="width: 50px;height:50px" src="/static/json_file.svg"> `tsconfig.json`
+ - <img style="width: 50px;height:50px" src="/static/json_file.svg"> `mbler.config.json`
+ - <img style="width: 50px;height:50px" src="/static/json_file.svg"> `package.json`
+ - <img style="width: 50px;height:50px" src="/static/folder.svg">) `resources`
 Among them, resources and behavior can put the JSON and other content of the original add-on package.  
 
 After `mbler build` (or `npm run build`), it will be generated as an additional package, and you can set the outdir in `mbler.config.json` to the behavior package/resource package path of MC Bedrock for real-time testing.

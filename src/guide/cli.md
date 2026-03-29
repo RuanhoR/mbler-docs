@@ -36,3 +36,21 @@ Build the project as an mc addon. If `BUILD_MODULE` in the env is `build`, it wi
 
 ## `watch` Command
 Monitor changes and build in real time. No parameters, depends on the working directory context.
+
+## `set-work-dir` Command
+Set work dir manger mode.  
+Example
+- Use current cwd
+```bash
+mbler set-work-dir off
+```
+- Use work dir manger
+```bash
+mbler set-work-dir on
+# set work dir
+mbler work ./project
+```
+
+## `work` Command
+
+Set work dir, more see `set-work-dir`
