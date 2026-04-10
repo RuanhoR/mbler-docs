@@ -64,4 +64,34 @@ event.subscribe() // register all, or event.subscribe("EntityHitEntity")
 </script>
 ```
 ### Component MCX
-No need to think about this one yet, it is still in the planning stage
+First, create a .mcx file and add the `<Component>` tag inside it.  
+Demonstration  
+```
+<Component>
+  <items>
+    <item id="demo">itemComponent</item>
+  </items>
+</Component>
+<sctipt>
+import { ItemComponent } from "@mbler/mcx-core"
+const itemComponent = new ItemComponent({
+  format: "1.21.100", // format version
+  name: "Demo Item",
+  id: "mcx_demo:demo_item"
+});
+itemComponent.setAllowOffHand(true) // allow to be held in off-hand
+export {
+  itemComponent
+}
+</script>
+```
+Explanation
+ - Component
+   The root tag for component definition
+     - items
+       - Declares that JSON for items will be defined here
+         - item declares an item to be defined from the script export, the content is the export string, and the attribute id is the file Id
+ - Script
+   - Must implement the export defined in the Component, otherwise it will throw an error during compilation
+
+For component exports from @mbler/mcx-core, see [MCX Exported Object Analysis](./internal/mcx)
