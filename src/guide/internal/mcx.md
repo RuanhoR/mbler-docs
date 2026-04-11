@@ -1,23 +1,23 @@
 # mcx Internal
 
 ## Architecture
-__code__
+```
  mcx
   | mcx-core
   | mcx-types
   | mcx-client
-__code__
+```
  - mcx-client: Runtime framework
  - mcx-types: TypeScript type package
  - mcx-core: Core compiler
 
 ## APIs Provided by mcx-core
 Installation
-__code__bash
+```bash
 npm install @mbler/mcx --save
-__code__
+```
 Overall structure of the provided APIs
-__code__
+```
 {
   AST: { tag: [class McxAst], prop: [Function: PropParser] },
   Compiler: [Object: null prototype] {
@@ -35,21 +35,21 @@ __code__
   EntityComponent: [class EntityComponent],
   BlockComponent: [class BlockComponent]
 }
-__code__
-(Note: Except for the __code__PUBTYPE__code__ field, other fields that do not appear here but are available for use are experimental or subject to deletion)
+```
+(Note: Except for the `PUBTYPE` field, other fields that do not appear here but are available for use are experimental or subject to deletion)
 
 ### AST Field
 Internal AST generation
 #### tag
  - Usage
-__code__javascript
+```javascript
 const MCX = require("@mbler/mcx-core");
 const ast = new MCX.AST.tag("<script>console.log('Hello world')</script>");
 console.log(ast.parseAST())
-__code__
+```
  - Function: Converts HTML content into an AST with line numbers
- - Type of __code__MCX.AST.tag__code__:
-__code__ts
+ - Type of `MCX.AST.tag`:
+```ts
 interface BaseToken {
     data: string;
     type: TokenType;
@@ -102,17 +102,17 @@ declare class McxAst {
      */
     static generateCode(node: ParsedTagNode): string;
 }
-__code__
+```
 #### prop
  - Usage
-__code__javascript
+```javascript
 const MCX = require("@mbler/mcx-core");
 const ast = MCX.AST.prop("aaa=10\nbbb = bbb");
 console.log(ast)
-__code__
- - Function: Converts __code__key=value__code__ format into AST
+```
+ - Function: Converts `key=value` format into AST
  - Type
-__code__ts
+```ts
 type PropValue = number | string | object;
 interface PropNode {
     key: string;
@@ -121,11 +121,11 @@ interface PropNode {
 }
 // MCX.AST.prop
 declare function PropParser(code: string): PropNode[];
-__code__
+```
 
 ### Compiler Field
 Types used
-__code__ts
+```ts
 interface BuildCache {
     call: callList[];
     import: ImportList[];
@@ -185,19 +185,19 @@ declare class CompileError extends Error {
         pos: number;
     });
 }
-__code__
+```
 #### compileMCXFn
  - Usage
-__code__javascript
+```javascript
 const MCX = require("@mbler/mcx-core");
 const buildIR = MCX.Compiler.compileMCXFn("<Event @after tick='50'>EntityHitEntity=entity</Event><script>export const entity = function(event){console.log(event)}</script>");
 console.log(buildIR)
-__code__
- - Function: Converts __code__mcx__code__ source files to build IR
+```
+ - Function: Converts `mcx` source files to build IR
  - Type
-__code__ts
+```ts
 declare function compileMCXFn(mcxCode: string): MCXCompileData;
-__code__
+```
 
 ### plugin Field
 Generates rollup language extensions
