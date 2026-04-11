@@ -1,23 +1,23 @@
-# MCX Internals
+# mcx Internal
 
 ## Architecture
-```
+__code__
  mcx
   | mcx-core
   | mcx-types
   | mcx-client
-```
+__code__
  - mcx-client: Runtime framework
- - mcx-types: ts type package
+ - mcx-types: TypeScript type package
  - mcx-core: Core compiler
 
-## The API provided by mcx-core
+## APIs Provided by mcx-core
 Installation
-```bash
+__code__bash
 npm install @mbler/mcx --save
-```
-The overall structure of the API provided
-```
+__code__
+Overall structure of the provided APIs
+__code__
 {
   AST: { tag: [class McxAst], prop: [Function: PropParser] },
   Compiler: [Object: null prototype] {
@@ -29,23 +29,27 @@ The overall structure of the API provided
   plugin: [Function: mcxPlugn],
   transform: [AsyncFunction: transform],
   utils: [class McxUtlis],
-  The type of export
-  PUBTYPE: {}
+  // Exported types
+  PUBTYPE: {},
+  ItemComponent: [class ItemComponent],
+  EntityComponent: [class EntityComponent],
+  BlockComponent: [class BlockComponent]
 }
-```
-(Note: Except for the 'PUBTYPE' field in this table, the other fields do not appear, but some fields are experimental or may be deleted)
-### AST field
+__code__
+(Note: Except for the __code__PUBTYPE__code__ field, other fields that do not appear here but are available for use are experimental or subject to deletion)
+
+### AST Field
 Internal AST generation
 #### tag
- - Use
-```javascript
+ - Usage
+__code__javascript
 const MCX = require("@mbler/mcx-core");
 const ast = new MCX.AST.tag("<script>console.log('Hello world')</script>");
 console.log(ast.parseAST())
-```
- - Function: Turn HTML fields into ASTs with line numbers
- - Type of 'MCX.AST.tag':
-```ts
+__code__
+ - Function: Converts HTML content into an AST with line numbers
+ - Type of __code__MCX.AST.tag__code__:
+__code__ts
 interface BaseToken {
     data: string;
     type: TokenType;
@@ -92,23 +96,23 @@ declare class McxAst {
     constructor(text: string);
     parseAST(): ParsedTagNode[];
     /**
-     * Generate code strings (recursively process content arrays)
-     * @param node The AST node to generate the code
-     * @returns The generated code string
+     * Generate code string (recursively process content array)
+     * @param node AST node to generate code for
+     * @returns Generated code string
      */
     static generateCode(node: ParsedTagNode): string;
 }
-```
+__code__
 #### prop
- - Use
-```javascript
+ - Usage
+__code__javascript
 const MCX = require("@mbler/mcx-core");
-const ast = MCX.AST.prop("aaa=10nbbb = bbb");
+const ast = MCX.AST.prop("aaa=10\nbbb = bbb");
 console.log(ast)
-```
- - Function: Convert the format of 'key=value' to AST
+__code__
+ - Function: Converts __code__key=value__code__ format into AST
  - Type
-```ts
+__code__ts
 type PropValue = number | string | object;
 interface PropNode {
     key: string;
@@ -117,11 +121,11 @@ interface PropNode {
 }
 // MCX.AST.prop
 declare function PropParser(code: string): PropNode[];
-```
+__code__
 
-### Compiler field
-Type used
-```ts
+### Compiler Field
+Types used
+__code__ts
 interface BuildCache {
     call: callList[];
     import: ImportList[];
@@ -144,7 +148,7 @@ interface MCXstructureLoc {
         };
         isLoad: boolean;
     };
-    Component: Record <string, {
+    Component: Record<string, {
         type: MCXstructureLocComponentType;
         useExpore: string;
         loc: {
@@ -181,22 +185,31 @@ declare class CompileError extends Error {
         pos: number;
     });
 }
-```
+__code__
 #### compileMCXFn
- - Use
-```javascript
+ - Usage
+__code__javascript
 const MCX = require("@mbler/mcx-core");
 const buildIR = MCX.Compiler.compileMCXFn("<Event @after tick='50'>EntityHitEntity=entity</Event><script>export const entity = function(event){console.log(event)}</script>");
 console.log(buildIR)
-```
- - Function: Convert the 'mcx' source file to build IR
+__code__
+ - Function: Converts __code__mcx__code__ source files to build IR
  - Type
-```ts
+__code__ts
 declare function compileMCXFn(mcxCode: string): MCXCompileData;
-```
+__code__
 
-### plugin field
-Generate rollup language extensions
+### plugin Field
+Generates rollup language extensions
 
 ### transform
-Transform mcx to js
+Converts mcx to JavaScript
+
+### ItemComponent
+Used to create item JSON components
+
+### BlockComponent
+Used to create block JSON components
+
+### EntityComponent
+Used to create entity JSON components
