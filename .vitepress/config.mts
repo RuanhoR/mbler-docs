@@ -63,7 +63,7 @@ const nav: ThemeConfig['nav'] = [
     items: [
       {
         text: 'Chinese',
-        link: "https://zh.mbler-docs.ruanhor.dpdns.org"
+        link: "https://zh-mbler-docs.ruanhor.dpdns.org"
       },
       {
         text: 'English',
