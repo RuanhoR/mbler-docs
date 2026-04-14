@@ -70,6 +70,10 @@ const nav: ThemeConfig['nav'] = [
         link: "https://mbler-docs.ruanhor.dpdns.org"
       }
     ]
+  },
+  {
+    text: "Sitemap",
+    link: "/sitemap.xml"
   }
 ];
 export default {
@@ -94,5 +98,6 @@ export default {
     markdown: {
       html: false
     }
-  }
+  },
+  base: "/",
 };
