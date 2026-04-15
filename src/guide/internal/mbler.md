@@ -1,4 +1,5 @@
-
+# Mbler API
+---
 ## Installation
 
 ```bash
@@ -8,7 +9,7 @@ npm install mbler
 ## Import
 
 ```javascript
-import * as mbl from "mbler";
+import * as mbler from "mbler";
 ```
 
 ## Overview
