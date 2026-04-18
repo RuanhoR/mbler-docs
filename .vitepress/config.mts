@@ -2,11 +2,9 @@ import type {
   Config as ThemeConfig
 } from '@vue/theme';
 export const sidebar: ThemeConfig['sidebar'] = {
-  '/guide/': [
-    {
+  '/guide/': [{
       text: 'Tutorials',
-      items: [
-        {
+      items: [{
           text: 'Introduction',
           link: '/guide/introduction'
         },
@@ -30,8 +28,7 @@ export const sidebar: ThemeConfig['sidebar'] = {
     },
     {
       text: 'Internal Implementation',
-      items: [
-        {
+      items: [{
           text: 'Mbler',
           link: '/guide/internal/mbler'
         },
@@ -43,12 +40,10 @@ export const sidebar: ThemeConfig['sidebar'] = {
     }
   ]
 };
-const nav: ThemeConfig['nav'] = [
-  {
+const nav: ThemeConfig['nav'] = [{
     text: 'Documentation',
     activeMatch: `^/(guide|examples)/`,
-    items: [
-      {
+    items: [{
         text: 'Get Started',
         link: '/guide/quick-start'
       },
@@ -60,8 +55,7 @@ const nav: ThemeConfig['nav'] = [
   },
   {
     text: 'Language',
-    items: [
-      {
+    items: [{
         text: 'Chinese',
         link: "https://zh-mbler-docs.ruanhor.dpdns.org"
       },
@@ -89,15 +83,13 @@ export default {
     },
     nav,
     sidebar,
-    socialLinks: [
-      {
-        icon: 'github',
-        link: 'https://github.com/RuanhoR/mbler'
-      }
-    ],
+    socialLinks: [{
+      icon: 'github',
+      link: 'https://github.com/RuanhoR/mbler'
+    }],
     markdown: {
       html: false
     }
   },
-  base: "/",
+  base: "/"
 };
