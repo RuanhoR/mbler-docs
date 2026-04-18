@@ -54,3 +54,40 @@ mbler work ./project
 ## `work` Command
 
 Set work dir, more see `set-work-dir`
+
+## `install` Command
+- Tip: This command is planing
+
+Usage: 
+
+`mbler install @scope/name@version`
+
+If no version, use `latest`  
+
+Download a addon from `pmnx. qzz .io`
+
+## `publish` Command
+- Tip: This command is planing
+
+Usage: 
+
+`mbler publish -tag :tag_name`
+
+Publish your addon  
+
+Params
+ - `tag`: Set tag name
+ - `build`: `skip` or `on`, set can exetuce build command
+
+## `unpublish` Command
+- Tip: This command is planing
+
+Usage:
+`mbler unpublish @scope/name@version`
+
+## `set-token` Command
+- Tip This command is planing
+
+Usage:
+`mbler set-token <token>`
+Set your `pmnx. qzz .io` token

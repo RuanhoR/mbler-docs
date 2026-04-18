@@ -3,7 +3,7 @@
 ## Download
 This tool relies on Nodejs, so please go to [Nodejs](https://nodejs.org) to download nodejs first. If you're a mobile phone party, you can search for Termux and download Nodejs first.  
 
-Once Nodejs is installed, you can install it via commands
+Once Nodejs is installed, you can install it via commands [npm package](https://npmjs.com/package/mbler)
 ```bash
 # npm
 npm install -g mbler
