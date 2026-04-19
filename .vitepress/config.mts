@@ -23,6 +23,10 @@ export const sidebar: ThemeConfig['sidebar'] = {
         {
           text: 'Create Projects with Mcx (Beta)',
           link: '/guide/mcx'
+        },
+        {
+          text: 'Vscode Extension',
+          link: '/guide/vscode'
         }
       ]
     },
