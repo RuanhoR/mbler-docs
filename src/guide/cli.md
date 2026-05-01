@@ -85,9 +85,13 @@ Params
 Usage:
 `mbler unpublish @scope/name@version`
 
-## `set-token` Command
-- Tip This command is planing
+## `config` Command
+- Note: This command is in planning
 
 Usage:
-`mbler set-token <token>`
-Set your `pmnx. qzz .io` token
+`mbler config get <key>`  
+`mbler config set <key> <value>`  
+`mbler config point `  
+`mbler config point <new config file point>`
+
+Common Key: token (stores pmnx token
