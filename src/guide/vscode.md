@@ -1,4 +1,4 @@
-# VSOCDE Extension
+# VSOCDE extension
 
-MCX have a vscode extension, You can type `mcx` in vscode market.  
-This is in dev, only highlight can use.
+MCX has a VSCode extension where you can enter 'mcx' in the VSCode marketplace.  
+This extension is currently under development and has the following features-Complete it-Suspended document-Highlight-Format
