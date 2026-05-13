@@ -1,9 +1,36 @@
 # mcx DSL in Mbler
 ## Introduction
-mcx is a Vue-like DSL in Mbler designed for easier writing. the many features are incomplete. The following are unfinished parts:
- - vscode Floating documents, formatting, definition jump, code folding, error hints
- - importing mcx in ts has no types (planning to implement with volar, which is a bit complicated (volar dynamically modifies TypeScript code))
- - Component MCX
+mcx is a Vue-like DSL in Mbler designed for easier writing.
+
+### Completed Features
+- **VSCode Extension**: Syntax highlighting, code completion, hover documentation, formatting
+- **TypeScript Type Support**: Provided via `@mbler/mcx-language-server` LSP support
+- **Component MCX**: Support for Item, Block, Entity component definitions
+- **UI MCX**: User interface building
+- **Event MCX**: Event handling
+
+### Install @mbler/mcx-core
+
+```bash
+npm install @mbler/mcx-core --save
+```
+
+### Component API Overview
+
+`@mbler/mcx-core` exports the following component classes:
+
+```javascript
+import {
+  ItemComponent,
+  BlockComponent,
+  EntityComponent,
+  PNGImageComponent,
+  JPGImageComponent,
+  SVGImageComponent,
+  GIFImageComponent,
+  ComponentType
+} from "@mbler/mcx-core";
+```
 
 ## Usage
 

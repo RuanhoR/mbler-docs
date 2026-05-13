@@ -8,11 +8,18 @@ npm install mbler
 
 ## Import
 
+Starting from version `0.2.4-rc.6`, Mbler supports modular imports:
+
 ```javascript
 import * as mbler from "mbler";
+
+// Build module entry (recommended) - contains Build, build, watch and other build-related APIs
+import * as Build from "mbler/build";
 ```
 
 ## Overview
+
+### Main Entry `mbler`
 
 ```javascript
 require("mbler");
@@ -53,6 +60,26 @@ require("mbler");
   }
 }*/
 ```
+
+### Build Module Entry `mbler/build`
+
+Starting from version `0.2.4-rc.6`, a separate build module entry is provided:
+
+```javascript
+require("mbler/build");
+/* return: {
+  default: [class Build],
+  Build: [class Build],
+  build: [Function: build],
+  watch: [Function: watch],
+  McxTsc: [Function: McxTsc]
+}*/
+```
+
+**Use Cases:**
+- When you only need build functionality without CLI or other features
+- For encapsulating custom build workflows
+- To reduce unnecessary dependency imports
 
 ## API
 

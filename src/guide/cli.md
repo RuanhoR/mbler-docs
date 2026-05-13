@@ -1,4 +1,17 @@
 # Mbler Command Line Usage
+
+## Module Import Note
+
+Starting from version `0.2.4-rc.6`, Mbler supports modular imports:
+
+```javascript
+// Main entry - contains CLI and core types
+import * as mbler from "mbler";
+
+// Build module - contains Build, build, watch and other build-related APIs
+import * as Build from "mbler/build";
+```
+
 ## `c` Command
 Introduction: Switch/View the working directory  
 Usage: mblr c [?:dir]  
