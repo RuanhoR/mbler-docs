@@ -113,7 +113,7 @@ class CompileError extends Error {
 
 ---
 
-### Compiler compileMCXFn
+### Compiler#compileMCXFn
 
 Convert MCX source file to build IR.
 
@@ -129,7 +129,7 @@ function compileMCXFn(mcxCode: string): MCXCompileData;
 
 ---
 
-### Compiler compileJSFn
+### Compiler#compileJSFn
 
 Compile JavaScript code.
 
@@ -145,7 +145,7 @@ function compileJSFn(jsCode: string): JsCompileData;
 
 ---
 
-## plugin
+### plugin
 
 Generate Rollup language extension.
 
@@ -161,7 +161,7 @@ function mcxPlugin(options: CompileOpt): Plugin;
 
 ---
 
-## transform
+### transform
 
 Convert MCX to JavaScript.
 
@@ -183,117 +183,108 @@ async function transform(
 
 ---
 
-## utils
+### # utils
 
-Utility class.
+Utility class, provides file system operations and type verification.
 
 ```typescript
 class McxUtils {
-  static resolvePath(base: string, relative: string): string;
-  static normalizeMCX(code: string): string;
-  // ... other utilities
+  static FileExsit(path: string): Promise<boolean>;
+  static readFile(filePath: string, opt?: ReadFileOpt): Promise<string | object>;
+  static sleep(time: number): Promise<void>;
+  static TypeVerify(obj: any, types: TypeVerifyBody): boolean;
+  static AbsoluteJoin(baseDir: string, inputPath: string): string;
 }
-```
- - Usage
-```javascript
-const MCX = require("@mbler/mcx-core");
-const ast = MCX.AST.prop("aaa=10\nbbb = bbb");
-console.log(ast)
-```
- - Function: Converts `key=value` format into AST
- - Type
-```ts
-type PropValue = number | string | object;
-interface PropNode {
-    key: string;
-    value: PropValue;
-    type: "PropChar" | "PropObject";
-}
-// MCX.AST.prop
-declare function PropParser(code: string): PropNode[];
 ```
 
-### Compiler Field
-Types used
-```ts
-interface BuildCache {
-    call: callList[];
-    import: ImportList[];
-    export: Array<ExportNamedDeclaration | ExportAllDeclaration | ExportDefaultDeclaration>;
-}
-declare const _MCXstructureLocComponentTypes: {
-    readonly items: "item";
-    readonly blocks: "block";
-    readonly entities: "entity";
-};
-type MCXstructureLocComponentType = typeof _MCXstructureLocComponentTypes[keyof typeof _MCXstructureLocComponentTypes];
-interface MCXstructureLoc {
-    script: string;
-    Event: {
-        on: "after" | "before";
-        subscribe: Record<string, string>;
-        loc: {
-            line: number;
-            pos: number;
-        };
-        isLoad: boolean;
-    };
-    Component: Record<string, {
-        type: MCXstructureLocComponentType;
-        useExpore: string;
-        loc: {
-            line: number;
-            pos: number;
-        };
-    }>;
-}
-declare class JsCompileData {
-    node: t.Program;
-    BuildCache: BuildCache;
-    File: string;
-    isFile: boolean;
-    constructor(node: t.Program, BuildCache?: BuildCache);
-    setFilePath(dir: string): void;
-}
-declare class MCXCompileData {
-    raw: ParsedTagNode[];
-    JSIR: JsCompileData;
-    strLoc: MCXstructureLoc;
-    File: string;
-    isFile: boolean;
-    constructor(raw: ParsedTagNode[], JSIR: JsCompileData, strLoc: MCXstructureLoc);
-    setFilePath(dir: string): void;
-}
+#### utils#FileExsit
 
-declare class CompileError extends Error {
-    loc: {
-        line: number;
-        pos: number;
-    };
-    constructor(message: string, loc: {
-        line: number;
-        pos: number;
-    });
-}
-```
-#### compileMCXFn
- - Usage
-```javascript
-const MCX = require("@mbler/mcx-core");
-const buildIR = MCX.Compiler.compileMCXFn("<Event @after tick='50'>EntityHitEntity=entity</Event><script>export const entity = function(event){console.log(event)}</script>");
-console.log(buildIR)
-```
- - Function: Converts `mcx` source files to build IR
- - Type
-```ts
-declare function compileMCXFn(mcxCode: string): MCXCompileData;
+Check if a file exists.
+
+```typescript
+static FileExsit(path: string): Promise<boolean>;
 ```
 
-### plugin Field
-Generates rollup language extensions
+**Parameters:**
+- `path: string` - File path
 
-### transform
-Converts mcx to JavaScript
+**Return Value:**
+- `Promise<boolean>` - Whether the file exists
+
+---
+
+#### utils#readFile
+
+Read file content, supports returning string or object, with retry mechanism.
+
+```typescript
+static readFile(
+  filePath: string,
+  opt?: ReadFileOpt
+): Promise<string | object>;
+```
+
+**Parameters:**
+- `filePath: string` - File path
+- `opt?: ReadFileOpt` - Configuration options
+  - `delay?: number` - Retry delay (default 200ms)
+  - `maxRetries?: number` - Max retry count (default 3)
+  - `want?: 'string' | 'object'` - Return type (default 'string')
+
+**Return Value:**
+- `Promise<string | object>` - File content
+
+---
+
+#### utils#sleep
+
+Delay execution.
+
+```typescript
+static sleep(time: number): Promise<void>;
+```
+
+**Parameters:**
+- `time: number` - Delay time in milliseconds
+
+**Return Value:**
+- `Promise<void>`
+
+---
+
+#### utils#TypeVerify
+
+Verify object types at runtime.
+
+```typescript
+static TypeVerify(obj: any, types: TypeVerifyBody): boolean;
+```
+
+**Parameters:**
+- `obj: any` - Object to verify
+- `types: TypeVerifyBody` - Type definition, e.g., `{ name: 'string', age: 'number' }`
+
+**Return Value:**
+- `boolean` - Whether verification passed
+
+---
+
+#### utils#AbsoluteJoin
+
+Join paths, returns absolute path directly if input is absolute, otherwise joins with base directory.
+
+```typescript
+static AbsoluteJoin(baseDir: string, inputPath: string): string;
+```
+
+**Parameters:**
+- `baseDir: string` - Base directory
+- `inputPath: string` - Input path
+
+**Return Value:**
+- `string` - Absolute path
+
+---
 
 ### ItemComponent
 Used to create item JSON components

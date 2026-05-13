@@ -1,49 +1,44 @@
-# MBLER API
-
-## Usage
-
-### Installation
+# Mbler API
+---
+## Installation
 
 ```bash
-npm i mbler --save
+npm install mbler
 ```
 
-### Import
+## Import
 
-Mbler supports module-based imports starting from version `0.2.4-rc.6`:
+Starting from version `0.2.4-rc.6`, Mbler supports modular imports:
 
 ```javascript
 // Main entry
 import * as mbler from "mbler";
 
-// Build module entry (recommended) - includes Build, build, watch, etc. build-related APIs
+// Build module entry (recommended) - contains Build, build, watch and other build-related APIs
 import * as Build from "mbler/build";
 ```
 
-::: warning Deprecation notice
-From version `0.2.4-rc.6`, **do not use** `mbler.Build` or `mbler.default.Build` to access build APIs. These APIs have been moved to the `mbler/build` entry point.
+::: warning Deprecation Notice
+Starting from version `0.2.4-rc.6`, using `mbler.Build` or `mbler.default.Build` to access build APIs is **not recommended**. These APIs have been moved to the `mbler/build` entry point.
 
-Old usage (deprecated):
-
+Deprecated (old):
 ```javascript
 import * as mbler from "mbler";
-mbler.Build; // deprecated
-mbler.build; // deprecated
+mbler.Build // deprecated
+mbler.build // deprecated
 ```
 
-New usage (recommended):
-
+Recommended (new):
 ```javascript
 import * as Build from "mbler/build";
-Build.Build; // new Build class
-Build.build; // new build function
+Build.Build   // new Build class
+Build.build  // new build function
 ```
-
 :::
 
 ## Overview
 
-### Main entry `mbler`
+### Main Entry `mbler`
 
 ```javascript
 require("mbler");
@@ -62,7 +57,7 @@ require("mbler");
 }*/
 ```
 
-### Build module entry `mbler/build`
+### Build Module Entry `mbler/build`
 
 Starting from version `0.2.4-rc.6`, a separate build module entry is provided:
 
@@ -77,19 +72,18 @@ require("mbler/build");
 }*/
 ```
 
-**Use cases:**
-
+**Use Cases:**
 - When you only need build functionality without CLI or other features
-- Used for encapsulating custom build processes
-- Reduces unnecessary dependency imports
+- For encapsulating custom build workflows
+- To reduce unnecessary dependency imports
 
 # API
 
 ## mbler
 
-### mbler cli
+### mbler#cli
 
-Run a CLI service and parse current CLI parameters.
+Run a CLI service, parse current CLI arguments.
 
 ```typescript
 function cli(): Promise<void>;
@@ -98,12 +92,11 @@ function cli(): Promise<void>;
 **Parameters:** None
 
 **Return Value:**
-
-- `Promise<void>` - CLI execution completed
+- `Promise<void>` - CLI execution complete
 
 ---
 
-### mbler defineConfig
+### mbler#defineConfig
 
 Define Mbler configuration file type for type hints.
 
@@ -112,31 +105,18 @@ function defineConfig(config: MblerConfigData): MblerConfigData;
 ```
 
 **Parameters:**
-
 - `config: MblerConfigData` - Mbler configuration data
 
 **Return Value:**
-
 - `MblerConfigData` - Returns the passed configuration object
-
----
-
-### mbler cli
-
-Run a CLI service and parse current CLI parameters
-Direct call, no parameters
-
-```typescript
-function cli(): Promise<void>;
-```
 
 ---
 
 ## Types
 
-### Types LanguageNames
+### Types#LanguageNames
 
-List of supported language names.
+Supported language names list.
 
 ```typescript
 const LanguageNames: ["zh", "en"];
@@ -144,36 +124,22 @@ const LanguageNames: ["zh", "en"];
 
 ---
 
-### Types cmdList
+### Types#cmdList
 
 Available command list.
 
 ```typescript
 const cmdList: readonly [
-  "c",
-  "work",
-  "help",
-  "h",
-  "init",
-  "version",
-  "build",
-  "watch",
-  "lang",
-  "set-work-dir",
-  "publish",
-  "unpublish",
-  "install",
-  "uninstall",
-  "login",
-  "profile",
-  "view",
-  "config",
+  "c", "work", "help", "h", "init", "version",
+  "build", "watch", "lang", "set-work-dir",
+  "publish", "unpublish", "install", "uninstall",
+  "login", "profile", "view", "config"
 ];
 ```
 
 ---
 
-### Types templateMblerConfig
+### Types#templateMblerConfig
 
 Default configuration template.
 
@@ -183,9 +149,9 @@ const templateMblerConfig: MblerConfigData;
 
 ---
 
-### Types CliParam
+### Types#CliParam
 
-CLI parameters interface.
+CLI parameter interface.
 
 ```typescript
 interface CliParam {
@@ -195,13 +161,12 @@ interface CliParam {
 ```
 
 **Properties:**
-
-- `params: string[]` - Command line argument array
+- `params: string[]` - Command line parameter array
 - `opts: Record<string, string>` - Options key-value pairs
 
 ---
 
-### Types MblerConfigData
+### Types#MblerConfigData
 
 Configuration file data interface.
 
@@ -219,19 +184,18 @@ interface MblerConfigData {
 ```
 
 **Properties:**
-
 - `name: string` - Project name (required)
 - `description: string` - Project description (required)
 - `version: string` - Project version (required)
 - `mcVersion: string | string[]` - Minecraft version (required)
 - `outdir?: MblerConfigOutdir` - Output directory configuration
 - `script?: MblerConfigScript` - Script configuration
-- `minify?: boolean` - Whether to minify code
+- `minify?: boolean` - Whether to compress code
 - `build?: MblerBuildConfig` - Build configuration
 
 ---
 
-### Types MblerConfigOutdir
+### Types#MblerConfigOutdir
 
 Output directory configuration interface.
 
@@ -244,14 +208,13 @@ interface MblerConfigOutdir {
 ```
 
 **Properties:**
-
 - `behavior?: string` - Behavior pack output directory
 - `resources?: string` - Resource pack output directory
 - `dist: string` - Main output directory (required)
 
 ---
 
-### Types MblerConfigScript
+### Types#MblerConfigScript
 
 Script configuration interface.
 
@@ -265,7 +228,6 @@ interface MblerConfigScript {
 ```
 
 **Properties:**
-
 - `main: string` - Entry file (required)
 - `ui?: boolean` - Whether to enable UI
 - `lang?: "ts" | "mcx" | "js"` - Script language type
@@ -273,7 +235,7 @@ interface MblerConfigScript {
 
 ---
 
-### Types MblerBuildConfig
+### Types#MblerBuildConfig
 
 Build configuration interface.
 
@@ -289,17 +251,16 @@ interface MblerBuildConfig {
 ```
 
 **Properties:**
-
 - `rollupPlugins?: Plugin[]` - Custom Rollup plugins
 - `cache?: "auto" | "enable" | "disable"` - Cache mode
 - `bundle?: boolean` - Whether to bundle
-- `onEnd?: (config: MblerConfigData) => Promise<void>` - Build completion callback
+- `onEnd?: (config: MblerConfigData) => Promise<void>` - Build complete callback
 - `onStart?: (config: MblerConfigData) => Promise<void>` - Build start callback
 - `onWarn?: (config: MblerConfigData, warning: Error) => void` - Warning callback
 
 ---
 
-### Types ManifestData
+### Types#ManifestData
 
 Manifest data interface.
 
@@ -338,21 +299,19 @@ interface ManifestData {
 
 ## commander
 
-### commander Input
+### commander#Input
 
-Utility class: Provides console interaction features such as highlighted menu rendering, interactive selection, etc.
+Utility class: Provides console interaction features like highlighted menu rendering, interactive selection, etc.
 
 ```typescript
 class Input {
   static render(arr: string[], index: number): string;
   static select<T extends Array<any>>(tip: string, arr: T): Promise<T[number]>;
-  static use(
-    task: (name: string, ctrl: boolean, alt: boolean, raw: string) => void,
-  ): void;
+  static use(task: (name: string, ctrl: boolean, alt: boolean, raw: string) => void): void;
 }
 ```
 
-#### commander Input render
+#### commander#Input#render
 
 Render menu string with highlighted selected item.
 
@@ -361,17 +320,15 @@ static render(arr: string[], index: number): string;
 ```
 
 **Parameters:**
-
 - `arr: string[]` - Menu options array
 - `index: number` - Selected item index
 
 **Return Value:**
-
 - `string` - Rendered menu string
 
 ---
 
-#### commander Input select
+#### commander#Input#select
 
 Interactive menu selection.
 
@@ -380,17 +337,15 @@ static select<T extends Array<any>>(tip: string, arr: T): Promise<T[number]>;
 ```
 
 **Parameters:**
-
 - `tip: string` - Prompt text
 - `arr: T` - Options array
 
 **Return Value:**
-
 - `Promise<T[number]>` - Selected result
 
 ---
 
-#### commander Input use
+#### commander#Input#use
 
 Register global key press callback.
 
@@ -399,45 +354,41 @@ static use(task: (name: string, ctrl: boolean, alt: boolean, raw: string) => voi
 ```
 
 **Parameters:**
-
 - `task: (name: string, ctrl: boolean, alt: boolean, raw: string) => void` - Callback function
 
 **Return Value:** None
 
 ---
 
-### commander click
+### commander#click
 
-Wait for a key to be pressed.
+Wait for a specific key to be pressed.
 
 ```typescript
 function click(
   name: string,
-  options?: { ctrl?: boolean; alt?: boolean },
+  options?: { ctrl?: boolean; alt?: boolean }
 ): Promise<void>;
 ```
 
 **Parameters:**
-
 - `name: string` - Key name (required)
 - `options?: { ctrl?: boolean; alt?: boolean }` - Key options
 
 **Return Value:**
-
 - `Promise<void>` - Resolves when key is pressed
 
 ---
 
-### commander onEnd
+### commander#onEnd
 
-Register callback task when process exits.
+Register callback tasks when process exits.
 
 ```typescript
 function onEnd(task: () => void): void;
 ```
 
 **Parameters:**
-
 - `task: () => void` - Callback function to execute on exit
 
 **Return Value:** None
@@ -446,7 +397,7 @@ function onEnd(task: () => void): void;
 
 ## i18n
 
-### i18n default
+### i18n#default
 
 Default export of the i18n module.
 
@@ -461,7 +412,7 @@ interface i18n extends language {
 
 ---
 
-### i18n Lang
+### i18n#Lang
 
 Language management class.
 
@@ -473,7 +424,7 @@ class Lang {
 }
 ```
 
-#### i18n Lang init
+#### i18n#Lang#init
 
 Initialize language settings.
 
@@ -483,7 +434,7 @@ init(): void;
 
 ---
 
-#### i18n Lang set
+#### i18n#Lang#set
 
 Set current language.
 
@@ -492,12 +443,11 @@ set(newLang: "zh" | "en"): void;
 ```
 
 **Parameters:**
-
 - `newLang: "zh" | "en"` - Language type
 
 ---
 
-#### i18n Lang get
+#### i18n#Lang#get
 
 Get current language configuration.
 
@@ -506,33 +456,30 @@ get(): language;
 ```
 
 **Return Value:**
-
 - `language` - Current language configuration
 
 ---
 
 ## Build (mbler/build)
 
-### Build build
+### Build#build
 
-Perform a build.
+Perform a one-time build.
 
 ```typescript
 function build(cliParam: CliParam, work: string): Promise<number>;
 ```
 
 **Parameters:**
-
-- `cliParam: CliParam` - CLI parameters object
-- `work: string` - Working directory path
+- `cliParam: CliParam` - CLI parameter object
+- `work: string` - Work directory path
 
 **Return Value:**
-
 - `Promise<number>` - Returns status code, 0 indicates success
 
 ---
 
-### Build watch
+### Build#watch
 
 Start watch mode, automatically rebuild when files change.
 
@@ -541,19 +488,17 @@ function watch(cliParam: CliParam, work: string): Promise<number>;
 ```
 
 **Parameters:**
-
-- `cliParam: CliParam` - CLI parameters object
-- `work: string` - Working directory path
+- `cliParam: CliParam` - CLI parameter object
+- `work: string` - Work directory path
 
 **Return Value:**
-
 - `Promise<number>` - Returns status code, 0 indicates success
 
 ---
 
-### Build Build
+### Build#Build
 
-Build class, provides more granular build control.
+Build class, provides finer-grained control of building.
 
 ```typescript
 class Build {
@@ -577,7 +522,7 @@ class Build {
 }
 ```
 
-#### Build Build constructor
+#### Build#Build#constructor
 
 ```typescript
 constructor(
@@ -589,29 +534,27 @@ constructor(
 ```
 
 **Parameters:**
-
 - `opts: Record<string, string>` - Options
 - `baseBuildDir: string` - Base build directory
 - `resolve: (a: number) => void` - Completion callback
-- `isWatch?: boolean` - Whether in watch mode
+- `isWatch?: boolean` - Watch mode flag
 
 ---
 
-#### Build Build start
+#### Build#Build#start
 
-Start build.
+Start building.
 
 ```typescript
 start(): Promise<void>;
 ```
 
 **Return Value:**
-
-- `Promise<void>` - Build completed
+- `Promise<void>` - Build complete
 
 ---
 
-#### Build Build watch
+#### Build#Build#watch
 
 Start watch mode.
 
@@ -620,12 +563,11 @@ watch(): Promise<null | undefined>;
 ```
 
 **Return Value:**
-
 - `Promise<null | undefined>`
 
 ---
 
-#### Build Build getWatchers
+#### Build#Build#getWatchers
 
 Get watcher handles.
 
@@ -634,12 +576,11 @@ getWatchers(): { rollup: any; chokidar: any } | null;
 ```
 
 **Return Value:**
-
 - `{ rollup: any; chokidar: any } | null` - Watcher handles
 
 ---
 
-#### Build Build closeWatchers
+#### Build#Build#closeWatchers
 
 Close watchers.
 
@@ -649,7 +590,7 @@ closeWatchers(): void;
 
 ---
 
-### Build McxTsc
+### Build#McxTsc
 
 MCX TypeScript compiler.
 
@@ -658,3 +599,4 @@ class McxTsc {
   constructor();
   transform(code: string, options?: object): string;
 }
+```
