@@ -21,6 +21,10 @@ export const sidebar: ThemeConfig['sidebar'] = {
           link: '/guide/cli'
         },
         {
+          text: 'mbler.config.js',
+          link: '/guide/mbler-config'
+        },
+        {
           text: 'Create Projects with Mcx (Beta)',
           link: '/guide/mcx'
         },

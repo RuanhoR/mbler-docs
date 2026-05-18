@@ -9,9 +9,9 @@ project
   | behavior
     | Original behavior package resources (manifest.json will automatically generate required fields, if written it will add settings)
     | scripts
-      | Main script declared in mbler.config.json
+      | Main script declared in mbler.config.js
       | *.ts | *.mcx (if script.lang in Mbler Config uses ts or mcx)
-  | mbler.config.json (Mbler Config)
+  | mbler.config.js (Mbler Config)
   | package.json (usually doesn't need to be changed)
 ```
 
