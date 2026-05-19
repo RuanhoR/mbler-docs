@@ -6,7 +6,7 @@ MCX provides a VSCode extension to provide a better development experience.
 
 ### Method 1: Install from VSCode Marketplace
 
-Search for `mcx.language.support` in the VSCode extension marketplace and install it.
+Search for `ruanhor.mcx-vscode-client` in the VSCode extension marketplace and install it.
 
 ### Method 2: Use Mbler Auto-configuration
 
@@ -33,7 +33,9 @@ The VSCode extension provides the following features:
 The extension provides the following completion features:
 
 #### MCX Tag Completion
+
 Triggered when typing `<`, provides the following tags:
+
 - `script` - Script block
 - `Event` - Event definition block
 - `Component` - Component definition block
@@ -46,14 +48,18 @@ Triggered when typing `<`, provides the following tags:
 - `entity` - Entity definition
 
 #### Attribute Completion
+
 Triggered when typing inside a tag, provides common attributes:
+
 - `id` - Element unique identifier
 - `lang` - Script language (ts/js)
 - `@before` - Pre-event hook
 - `@after` - Post-event hook
 
 #### Script Block Completion
+
 Provides completions inside `<script>` block:
+
 - **import completion**: `Event`, `createApp`
 - **Path completion**: `"./event"`, `"./events"`
 - **Minecraft event completion**:
@@ -79,6 +85,7 @@ Provides completions inside `<script>` block:
 Displays detailed documentation when hovering over tags or attributes:
 
 #### Tag Documentation
+
 - **`<script>`**: Script block for embedded TypeScript/JavaScript code
   - Attributes: `lang`, `id`, `@before`, `@after`
   - Languages: `ts`, `js`
@@ -90,6 +97,7 @@ Displays detailed documentation when hovering over tags or attributes:
   - Attributes: `id`
 
 #### Attribute Documentation
+
 - **`id`**: Unique identifier for this element
 - **`lang`**: Script language specification (`ts` or `js`)
 - **`@before`** / **`@after`**: Event hook for executing code before/after main logic
@@ -105,11 +113,13 @@ Supports code formatting for `.mcx` files, triggered with `Shift+Alt+F` or comma
 ### # Language Server Integration
 
 The extension automatically starts a language server client providing:
+
 - Semantic analysis
 - Type checking
 - Error diagnostics
 
 #### Commands
+
 - **`mcx.restart.language`**: Restart the language server
 
 In the command palette (Ctrl+Shift+P), type `MCX: Restart Language Server` to restart.
@@ -155,12 +165,12 @@ import {
 } from "@mbler/mcx-server";
 ```
 
-| Export | Type | Description |
-|--------|------|-------------|
-| `MCXVirtualCode` | `class` | MCX virtual code class |
-| `createMCXLanguagePlugin` | `function` | Create MCX language plugin |
-| `createMCXVirtualCode` | `function` | Create MCX virtual code |
-| `MCXLanguagePlugin` | `type` | Language plugin type definition |
+| Export                    | Type       | Description                     |
+| ------------------------- | ---------- | ------------------------------- |
+| `MCXVirtualCode`          | `class`    | MCX virtual code class          |
+| `createMCXLanguagePlugin` | `function` | Create MCX language plugin      |
+| `createMCXVirtualCode`    | `function` | Create MCX virtual code         |
+| `MCXLanguagePlugin`       | `type`     | Language plugin type definition |
 
 #### createMCXLanguagePlugin
 
@@ -168,17 +178,20 @@ Create MCX language plugin for Volar language server.
 
 ```typescript
 function createMCXLanguagePlugin(
-  ts: typeof import("typescript")
+  ts: typeof import("typescript"),
 ): MCXLanguagePlugin;
 ```
 
 **Parameters:**
+
 - `ts: typeof import("typescript")` - TypeScript module
 
 **Returns:**
+
 - `MCXLanguagePlugin` - MCX language plugin instance
 
 **Usage Example:**
+
 ```typescript
 import * as ts from "typescript";
 import { createMCXLanguagePlugin } from "@mbler/mcx-server";
