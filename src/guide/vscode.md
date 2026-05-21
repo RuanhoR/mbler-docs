@@ -211,29 +211,3 @@ mcx-language-server
 ```
 
 ---
-
-## TSPlugin
-
-`@mbler/mcx-ts-plugin` provides a TypeScript plugin to enhance type checking for mcx files.
-
-### Install
-
-```bash
-npm install @mbler/mcx-ts-plugin --save-dev
-```
-
-### Configure
-
-Configure in `tsconfig.json`:
-
-```json
-{
-  "compilerOptions": {
-    "plugins": [
-      {
-        "name": "@mbler/mcx-ts-plugin"
-      }
-    ]
-  }
-}
-```
