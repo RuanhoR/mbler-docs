@@ -189,7 +189,7 @@ Utility class, provides file system operations and type verification.
 
 ```typescript
 class McxUtils {
-  static FileExsit(path: string): Promise<boolean>;
+  static FileExist(path: string): Promise<boolean>;
   static readFile(filePath: string, opt?: ReadFileOpt): Promise<string | object>;
   static sleep(time: number): Promise<void>;
   static TypeVerify(obj: any, types: TypeVerifyBody): boolean;
@@ -197,12 +197,12 @@ class McxUtils {
 }
 ```
 
-#### utils#FileExsit
+#### utils#FileExist
 
 Check if a file exists.
 
 ```typescript
-static FileExsit(path: string): Promise<boolean>;
+static FileExist(path: string): Promise<boolean>;
 ```
 
 **Parameters:**
