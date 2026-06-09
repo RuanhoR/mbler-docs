@@ -31,6 +31,10 @@ export const sidebar: ThemeConfig['sidebar'] = {
         {
           text: 'Vscode Extension',
           link: '/guide/vscode'
+        },
+        {
+          text: 'MNX Marketplace',
+          link: '/guide/mnx'
         }
       ]
     },
@@ -94,10 +98,10 @@ export default {
     socialLinks: [{
       icon: 'github',
       link: 'https://github.com/RuanhoR/mbler'
-    }],
-    markdown: {
-      html: false
-    }
+    }]
+  },
+  markdown: {
+    html: false
   },
   base: "/"
 };
