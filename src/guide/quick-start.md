@@ -21,34 +21,10 @@ Then, you can confirm whether the installation was successful
 mbler version
 ```
 
-Once installed, you can start the next step
-
 ## Create a project
 
-mbler has a working directory context that can be passed through
-
 ```bash
-mbler c .
-```
-
-Switch the working directory to the current directory.
-
-```bash
-mbler init
-```
-
-will output
-
-```
-Project Name: test
-Project Description: test
-Select project language: (press b to confirm, n key to select next)
-ts js mcx
-Initializing dependencies? (y/n): (press b to confirm, n key to select next)
-no pnpm npm
-Using UI modules? (y/n): y
-Initialize GIT Repository? (y/n): y
-Using the Beta API? (y/n): y
+pnpm create mbler
 ```
 
 Some file will be generated.  
