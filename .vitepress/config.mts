@@ -35,6 +35,10 @@ export const sidebar: ThemeConfig['sidebar'] = {
         {
           text: 'MNX Marketplace',
           link: '/guide/mnx'
+        },
+        {
+          text: 'Troubleshooting & FAQ',
+          link: '/guide/troubleshooting'
         }
       ]
     },
@@ -45,8 +49,12 @@ export const sidebar: ThemeConfig['sidebar'] = {
           link: '/guide/internal/mbler'
         },
         {
-          text: 'Mcx',
+          text: 'Mcx Core',
           link: '/guide/internal/mcx'
+        },
+        {
+          text: 'Runtime Framework',
+          link: '/guide/internal/runtime'
         }
       ]
     }
@@ -87,6 +95,12 @@ export default {
   description: 'Mbler Docs',
   srcDir: "src",
   themeConfig: {
+    outline: {
+      level: [1, 2, 3, 4, 5, 6],
+    },
+    search: {
+      provider: 'local',
+    },
     footer: {
       license: {
         text: 'MIT License',

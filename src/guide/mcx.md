@@ -78,7 +78,7 @@ system.run(() => {
 });
 ```
 
-### Event MCCX
+### Event MCX
 
 Example:
 
@@ -137,4 +137,51 @@ Explanation
 - Script
   - Must implement the export defined in the Component, otherwise it will throw an error during compilation
 
-For component exports from @mbler/mcx-core, see [MCX Exported Object Analysis](./internal/mcx)
+For component exports from @mbler/mcx-core, see [MCX Core API Reference](./internal/mcx)
+
+### App MCX
+
+The App MCX is the **entry point** of your addon. It orchestrates event MCX files and runs setup logic when the addon mounts.
+
+Example:
+
+```
+<script>
+import event from "./event.mcx";
+
+export default {
+  app: {
+    event: [event]
+  },
+  setup(ctx) {
+    console.log("Addon mounted!", ctx);
+  }
+}
+</script>
+```
+
+The compiled output is consumed by `createApp` from `@mbler/mcx`:
+
+```javascript
+import { createApp } from "@mbler/mcx";
+import { world } from "@minecraft/server";
+import app from "./app.mcx";
+
+const myApp = createApp(app);
+myApp.mount(world);
+```
+
+**How it works:**
+
+1. The app MCX imports one or more event MCX files
+2. `createApp(app)` creates an `App` instance
+3. `app.mount(world)` loads all imported event MCX files as `Event` objects, passes them into `ctx.event`, then calls `setup(ctx)`
+4. Inside `setup`, you can call `event.subscribe()` to register all event handlers
+
+**Structure of an App MCX:**
+
+- Must export a **default object** with:
+  - `app.event` — an array of compiled event MCX modules
+  - `setup(ctx)` — called after events are initialized, receives an `MCXCtx` with `{ event: Event[] }`
+
+For the runtime API, see [Runtime Framework API](./internal/runtime).

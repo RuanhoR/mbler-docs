@@ -75,50 +75,118 @@ Set work dir, more see `set-work-dir`
 
 ## `install` Command
 
-- Tip: This command is still in beta.
+> Beta — subject to change.
 
 Usage:
 
-`mbler install @scope/name@version`
+```bash
+mbler install @scope/name@version
+```
 
-If no version, use `latest`
+If no version is specified, the latest version is used.
 
-Download a addon from `pmnx. qzz .io`
+Downloads an addon from `pmnx.qzz.io` and copies it to the Minecraft game directory (behavior/resource packs).
 
-## `login` command
+## `uninstall` Command
 
-Tip: This command is still in beta.
+> Beta — subject to change.
 
-Run command and input pmnx token to login pmnx account
+Usage:
+
+```bash
+mbler uninstall @scope/name@version
+```
+
+Removes an installed addon from the Minecraft game directory.
+
+## `login` Command
+
+> Beta — subject to change.
+
+Usage:
+
+```bash
+mbler login [token]
+```
+
+Authenticates with the MNX marketplace. If no token is provided, prompts for input interactively.
+
+## `profile` Command
+
+> Beta — subject to change.
+
+Usage:
+
+```bash
+mbler profile
+```
+
+Shows the currently logged-in user profile information.
 
 ## `publish` Command
 
-- Tip: This command is still in beta.
+> Beta — subject to change.
 
 Usage:
 
-`mbler publish -tag :tag_name`
+```bash
+mbler publish -tag :tag_name
+```
 
-Publish your addon
+Publishes your addon to the MNX marketplace.
 
-Params
+Options:
 
-- `tag`: Set tag name
-- `build`: `skip` or `on`, set can exetuce build command
+- `-tag` — Version tag (e.g. `latest`, `beta`)
+- `-build` — `skip` or `enable` (default: `enable`), whether to run the build before publishing
 
 ## `unpublish` Command
 
-- Tip: This command is still in beta.
+> Beta — subject to change.
 
 Usage:
-`mbler unpublish @scope/name@version`
+
+```bash
+mbler unpublish @scope/name@version
+```
+
+Removes a published version from the MNX marketplace.
+
+## `view` Command
+
+> Beta — subject to change.
+
+Usage:
+
+```bash
+mbler view @scope/name
+```
+
+Lists all published versions of a package on the MNX marketplace.
 
 ## `config` Command
 
-Usage:
-`mbler config get <key>`  
-`mbler config set <key> <value>`  
-`mbler config point `  
-`mbler config point <new config file point>`
+Manages global CLI configuration stored at `~/.config/.mbler.config.global.cli.json`.
 
-Common Key: token stores pmnx token
+Usage:
+
+```bash
+mbler config get <key>
+mbler config set <key> <value>
+mbler config point
+mbler config point <new config file path>
+```
+
+Common keys:
+- `token` — stores the MNX authentication token
+
+## `log` Command
+
+Manages the CLI log file (`~/.cache/mbler/latest.log`).
+
+Usage:
+
+```bash
+mbler log point    # Show log file path
+mbler log clean    # Clear the log file
+```

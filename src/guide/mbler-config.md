@@ -79,10 +79,11 @@ outdir: {
 
 ### `minify`
 
-Whether to minify the bundled script output.
+Minification engine for bundled script output.
 
-- Type: `boolean`
+- Type: `boolean | 'oxc' | 'terser' | 'esbuild'`
 - Default: `false`
+- When set to `true`, uses the default minifier. Set to a specific engine name (`'oxc'`, `'terser'`, `'esbuild'`) to choose a particular minifier.
 
 ### `build`
 
@@ -109,16 +110,17 @@ Additional Rolldown plugins to include in the build pipeline.
 
 #### `build.rollupExternal`
 
-Additional module names to mark as external (not bundled).
+Additional module names to mark as external (not bundled). Useful when you want to keep certain dependencies outside the bundle.
 
 - Type: `string[]`
+- Example: `["@some-org/some-lib"]`
 
 #### `build.cache`
 
 Cache mode for Rolldown builds.
 
 - Type: `"none" | "memory" | "file" | "filesystem" | "auto"`
-- Default: `"auto"` (uses file cache)
+- Default: `"auto"` (resolves to `"file"` cache)
 
 #### `build.cachePath`
 
@@ -129,7 +131,29 @@ Custom path for the cache file.
 
 #### `build.bundle`
 
-Whether to bundle all code into a single output file (`true`) or use code splitting (`false`).
+Whether to bundle scripts via Rolldown.
+
+- Type: `boolean`
+- Default: `true`
+- When `false`, scripts are copied verbatim without bundling
+
+#### `build.outputDir`
+
+Output subdirectory for compiled scripts within the behavior pack output.
+
+- Type: `string`
+- Default: `"scripts"`
+
+#### `build.outputFilename`
+
+Override the output filename for the bundled script.
+
+- Type: `string`
+- Default: derived from the entry script name
+
+#### `build.clean`
+
+Whether to clean output directories before each build.
 
 - Type: `boolean`
 - Default: `true`
@@ -138,10 +162,16 @@ Whether to bundle all code into a single output file (`true`) or use code splitt
 
 Callback invoked before the build starts.
 
+- Type: `(ctx: MblerConfigData) => void | Promise<void>`
+
 #### `build.onEnd`
 
 Callback invoked after the build completes.
 
+- Type: `(ctx: MblerConfigData) => void | Promise<void>`
+
 #### `build.onWarn`
 
 Callback invoked when a build warning is emitted.
+
+- Type: `(ctx: MblerConfigData, warning: Error) => void | Promise<void>`
