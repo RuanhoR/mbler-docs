@@ -26,8 +26,18 @@ export default defineConfig({
 `name` and `version` are read from `package.json` in the project root. You do not need to specify them in `mbler.config.js`.
 :::
 
-- `name` — The addon name, must match the pattern `@scope/name` (e.g. `@ruanhor/my-addon`)
+- `name` — The addon package name, must match the pattern `@scope/name` (e.g. `@ruanhor/my-addon`). Used for UUID generation and MNX publishing.
+- `displayName` — Optional. A human-readable name displayed in the generated `manifest.json`. If not set, `name` is used instead.
 - `version` — The addon version (e.g. `0.0.1-beta`)
+
+```js
+export default defineConfig({
+  name: "@ruanhor/my-addon",
+  displayName: "My Awesome Addon",
+  version: "0.0.1",
+  // ...
+});
+```
 
 ### `description`
 

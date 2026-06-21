@@ -173,18 +173,20 @@ Configuration file data interface.
 ```typescript
 interface MblerConfigData {
   name: string;
+  displayName?: string;
   description: string;
   version: string;
   mcVersion: string | string[];
   outdir?: MblerConfigOutdir;
   script?: MblerConfigScript;
-  minify?: boolean;
+  minify?: boolean | 'oxc' | 'terser' | 'esbuild';
   build?: MblerBuildConfig;
 }
 ```
 
 **Properties:**
-- `name: string` - Project name (required)
+- `name: string` - Package name (required), used for UUID generation and MNX publishing
+- `displayName?: string` - Optional display name shown in manifest.json; falls back to `name` if not set
 - `description: string` - Project description (required)
 - `version: string` - Project version (required)
 - `mcVersion: string | string[]` - Minecraft version (required)
