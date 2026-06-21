@@ -132,3 +132,76 @@ Yes. The `login`, `publish`, and `unpublish` commands are designed for automatio
 mbler login $MNX_TOKEN
 mbler publish -tag latest
 ```
+
+---
+
+## How Mbler Resolves SAPI Versions
+
+When you set `mcVersion: "1.21.100"` in `mbler.config.js`, Mbler needs to find the correct `@minecraft/server` and `@minecraft/server-ui` npm package versions that ship with that Minecraft version. This resolution happens in `src/build/sapi.ts`.
+
+### The Problem
+
+Minecraft Bedrock's Script API (`@minecraft/server`) publishes many versions to npm, each embedding the target Minecraft version in its version string. For example:
+
+```
+2.1.0-beta.1.21.100-stable   → Minecraft 1.21.100
+2.0.0-beta.1.21.60-stable    → Minecraft 1.21.60
+2.5.0-beta.1.21.120-preview  → Minecraft 1.21.120 (preview/beta)
+```
+
+The version string format is: `<sapi-version>-<channel>.<embedded-mc-version>-<stability>`.
+
+### Resolution Algorithm
+
+1. **Fetch npm registry**: Mbler fetches all versions of `@minecraft/server` and `@minecraft/server-ui` from `https://registry.npmjs.com`.
+
+2. **Extract MC version**: For each npm version, it extracts the embedded Minecraft version using the regex:
+   ```
+   /-(?:rc|beta)(?:\.[^-.]+)*?\.((?:\d+\.){2}\d+)/
+   ```
+   This matches patterns like `beta.1.21.100` and captures `1.21.100`.
+
+3. **Classify releases**: Each entry is classified as either:
+   - **Formal (stable)** — version string contains `-stable`
+   - **Beta (preview)** — everything else (release candidates, previews, etc.)
+
+4. **Build a version map**: The result is a lookup table mapping each Minecraft version to its latest formal and beta SAPI versions:
+
+   ```json
+   {
+     "server": {
+       "1.21.60": { "formal": "2.0.0-beta.1.21.60-stable", "beta": "" },
+       "1.21.100": { "formal": "2.1.0-beta.1.21.100-stable", "beta": "" },
+       "1.21.120": { "formal": "", "beta": "2.5.0-beta.1.21.120-preview" }
+     }
+   }
+   ```
+
+5. **Cache**: The map is saved to `~/.mbler/_sapi_version.json` for offline reuse. Call `refresh()` to update.
+
+6. **Lookup** (`generateVersion`):
+   - Try **exact match** on `mcVersion` first
+   - If no exact match, find the **closest lower version** (e.g., if you request `1.21.110` and only `1.21.100` exists, it falls back to `1.21.100`)
+   - If no lower version exists, use the **earliest available** version
+   - Returns the formal (stable) version by default, or beta if `isBeta` is set
+   - Falls back to the other channel if the requested channel is empty
+
+7. **Version shortening** (`evalVersion`): The returned version is shortened for `manifest.json` dependencies. For example:
+   ```
+   "2.1.0-beta.1.21.100-stable" → "2.1.0-beta"
+   ```
+   Only the first two segments of the prerelease tag are kept.
+
+### Debugging SAPI Resolution
+
+To see which version Mbler resolved for your project, run:
+
+```bash
+BUILD_MODULE=release mbler build
+```
+
+The resolved version appears in the generated `manifest.json` under `dependencies`. You can also check the cache file directly:
+
+```bash
+cat ~/.mbler/_sapi_version.json
+```
