@@ -1,11 +1,6 @@
 {
   "name": "mbler-docs-en",
   "version": "0.0.3",
-  "pnpm": {
-    "allowBuilds": {
-      "esbuild": true
-    }
-  },
   "scripts": {
     "docs:dev": "pnpm vitepress dev",
     "docs:build": "pnpm vitepress build",

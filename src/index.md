@@ -3,6 +3,9 @@ head:
   - - meta
     - name: msvalidate.01
       content: "40314416D101CEA118ED086275E4B567"
+  - - meta
+    - name: keywords
+      content: "mcbe, dsl, mcx, mbler, mc, build, dev, docs"
 title: Mbler Documentation
 description: Mbler documentation site for Minecraft Bedrock Addon development tools
 lang: en
