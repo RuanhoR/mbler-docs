@@ -1,20 +1,45 @@
 # mcx Internal
 
 ## Architecture
-```
- mcx
-   | mcx-core
-   | mcx-types
-   | mcx-client
-```
- - mcx-client: Runtime framework
- - mcx-types: TypeScript type package
- - mcx-core: Core compiler
 
-## APIs Provided by mcx-core
-Installation
+The MCX ecosystem consists of the following npm packages:
+
+| Package | Description |
+|---------|-------------|
+| `@mbler/mcx-core` | Core compiler: parses `.mcx` files, transforms to JavaScript, provides Rollup/Rolldown plugins |
+| `@mbler/mcx` | Runtime framework: `createApp`, `Event`, `ui` classes for Minecraft Script API |
+| `@mbler/mcx-types` | TypeScript type declarations for MCX projects |
+| `@mbler/mcx-component` | Component builder classes: `ItemComponent`, `BlockComponent`, `EntityComponent`, image components |
+| `create-mbler` | CLI scaffolding tool (`npm create mbler`) |
+
+## Installation
+
 ```bash
 npm install @mbler/mcx-core --save
+```
+
+## Exports
+
+```javascript
+import {
+  PubType,           // Internal types namespace
+  AST,               // { tag: McxAst, prop: PropParser }
+  compiler,          // CompileJS, CompileMCX, CompileError, compileJSFn, compileMCXFn, MCXNodeUtils
+  utils,             // Utils class (default export, static methods)
+  transform,         // Transform MCX to JavaScript
+  compile_component, // compileComponent, RunScript, FilePoint helpers
+  rollupPlugin,      // Rollup plugin factory
+  rolldownPlugin,    // Rolldown plugin factory
+  // Component classes (re-exported from @mbler/mcx-component):
+  ItemComponent,
+  BlockComponent,
+  EntityComponent,
+  PNGImageComponent,
+  JPGImageComponent,
+  SVGImageComponent,
+  GIFImageComponent,
+  ComponentType,     // Namespace: component type definitions
+} from "@mbler/mcx-core";
 ```
 
 ## API
@@ -23,30 +48,32 @@ npm install @mbler/mcx-core --save
 
 Internal AST generation.
 
-### AST McxAst
+### AST#tag (McxAst)
 
 MCX AST parser class.
 
 ```typescript
 class McxAst {
-  constructor(text: string);
+  constructor(text: string, includeComments?: boolean);
   parseAST(): ParsedTagNode[];
+  data: ParsedTagNode[];
   static generateCode(node: ParsedTagNode): string;
 }
 ```
 
-#### AST McxAst constructor
+#### McxAst constructor
 
 ```typescript
-constructor(text: string);
+constructor(text: string, includeComments?: boolean);
 ```
 
 **Parameters:**
 - `text: string` - MCX text to parse
+- `includeComments?: boolean` - Whether to include comment nodes in the AST
 
 ---
 
-#### AST McxAst parseAST
+#### McxAst parseAST
 
 Parse MCX text into AST with line numbers.
 
@@ -59,7 +86,7 @@ parseAST(): ParsedTagNode[];
 
 ---
 
-#### AST McxAst generateCode
+#### McxAst generateCode
 
 Generate code string (recursively process content array).
 
@@ -75,7 +102,7 @@ static generateCode(node: ParsedTagNode): string;
 
 ---
 
-### AST prop
+### AST#prop (PropParser)
 
 Property parser function.
 
@@ -93,23 +120,23 @@ function PropParser(code: string): PropNode[];
 
 ## Compiler
 
-### Compiler CompileError
+### Compiler#CompileError
 
 Compile error class.
 
 ```typescript
 class CompileError extends Error {
-  loc: { line: number; pos: number };
-  constructor(message: string, loc: { line: number; pos: number });
+  loc: { line: number; column: number };
+  constructor(message: string, loc: { line: number; column: number });
 }
 ```
 
 **Properties:**
-- `loc: { line: number; pos: number }` - Error location
+- `loc: { line: number; column: number }` - Error location (line and column)
 
 **Parameters:**
 - `message: string` - Error message
-- `loc: { line: number; pos: number }` - Error location
+- `loc: { line: number; column: number }` - Error location
 
 ---
 
@@ -125,13 +152,13 @@ function compileMCXFn(mcxCode: string): MCXCompileData;
 - `mcxCode: string` - MCX source code
 
 **Return Value:**
-- `MCXCompileData` - Compiled data
+- `MCXCompileData` - Compiled data (raw AST + JS IR + structure location)
 
 ---
 
 ### Compiler#compileJSFn
 
-Compile JavaScript code.
+Compile JavaScript/TypeScript code.
 
 ```typescript
 function compileJSFn(jsCode: string): JsCompileData;
@@ -141,23 +168,87 @@ function compileJSFn(jsCode: string): JsCompileData;
 - `jsCode: string` - JavaScript code
 
 **Return Value:**
-- `JsCompileData` - Compiled JS data
+- `JsCompileData` - Compiled JS data with import/export reorganization
 
 ---
 
-### plugin
+### Compiler#CompileJS
 
-Generate Rollup language extension.
+Class that transforms a Babel `t.Program` into `JsCompileData`.
 
 ```typescript
-function mcxPlugin(options: CompileOpt): Plugin;
+class CompileJS {
+  constructor(node: t.Program);
+  TopContext: Context;
+  run(): void;
+  getCompileData(): JsCompileData;
+}
+```
+
+---
+
+### Compiler#CompileMCX
+
+Class that parses MCX source and produces `MCXCompileData`.
+
+```typescript
+class CompileMCX {
+  constructor(code: string);
+  getCompileData(): MCXCompileData;
+}
+```
+
+---
+
+### Compiler#MCXNodeUtils
+
+Utility functions re-exported from the compiler module.
+
+```typescript
+namespace MCXNodeUtils {
+  function ImportToCache(node: t.ImportDeclaration): ImportList;
+}
+```
+
+---
+
+### rollupPlugin
+
+Create a Rollup plugin for `.mcx` and `.ts` file transformation.
+
+```typescript
+function rollupPlugin(
+  opt: CompileOpt,
+  output: { behavior: string; resources: string; dist: string }
+): Plugin;
 ```
 
 **Parameters:**
-- `options: CompileOpt` - Compile options
+- `opt: CompileOpt` - Compile options (moduleDir, tsconfigPath, sourcemap, etc.)
+- `output` - Output directories object
 
 **Return Value:**
-- `Plugin` - Rollup plugin
+- `Plugin` - Rollup plugin instance
+
+---
+
+### rolldownPlugin
+
+Create a Rolldown plugin for `.mcx` and `.ts` file transformation.
+
+```typescript
+function rolldownPlugin(
+  opt: CompileOpt,
+  output: { behavior: string; resources: string; dist: string }
+): RolldownPlugin;
+```
+
+**Parameters:**
+- `opt: CompileOpt` - Compile options
+- `output` - Output directories object
+
+**Return Value:**
+- `RolldownPlugin` - Rolldown plugin instance
 
 ---
 
@@ -167,28 +258,34 @@ Convert MCX to JavaScript.
 
 ```typescript
 async function transform(
-  code: string,
+  code: MCXCompileData,
+  cache: Map<string, MCXCompileData>,
   id: string,
-  options: TransformOptions
-): Promise<TransformResult>;
+  context: TransformPluginContext,
+  opt: CompileOpt,
+  output: { behavior: string; resources: string; dist: string }
+): Promise<string>;
 ```
 
 **Parameters:**
-- `code: string` - MCX code
+- `code: MCXCompileData` - Compiled MCX data
+- `cache: Map<string, MCXCompileData>` - Compile cache
 - `id: string` - File ID
-- `options: TransformOptions` - Transform options
+- `context: TransformPluginContext` - Rollup transform context
+- `opt: CompileOpt` - Compile options
+- `output` - Output directories
 
 **Return Value:**
-- `Promise<TransformResult>` - Transform result
+- `Promise<string>` - Transformed JavaScript code
 
 ---
 
-### # utils
+### Utils
 
 Utility class, provides file system operations and type verification.
 
 ```typescript
-class McxUtils {
+class Utils {
   static FileExist(path: string): Promise<boolean>;
   static readFile(filePath: string, opt?: ReadFileOpt): Promise<string | object>;
   static sleep(time: number): Promise<void>;
@@ -197,7 +294,7 @@ class McxUtils {
 }
 ```
 
-#### utils#FileExist
+#### Utils#FileExist
 
 Check if a file exists.
 
@@ -213,7 +310,7 @@ static FileExist(path: string): Promise<boolean>;
 
 ---
 
-#### utils#readFile
+#### Utils#readFile
 
 Read file content, supports returning string or object, with retry mechanism.
 
@@ -236,7 +333,7 @@ static readFile(
 
 ---
 
-#### utils#sleep
+#### Utils#sleep
 
 Delay execution.
 
@@ -252,7 +349,7 @@ static sleep(time: number): Promise<void>;
 
 ---
 
-#### utils#TypeVerify
+#### Utils#TypeVerify
 
 Verify object types at runtime.
 
@@ -269,7 +366,7 @@ static TypeVerify(obj: any, types: TypeVerifyBody): boolean;
 
 ---
 
-#### utils#AbsoluteJoin
+#### Utils#AbsoluteJoin
 
 Join paths, returns absolute path directly if input is absolute, otherwise joins with base directory.
 
@@ -286,70 +383,78 @@ static AbsoluteJoin(baseDir: string, inputPath: string): string;
 
 ---
 
+## Component Classes
+
+The component builder classes (`ItemComponent`, `BlockComponent`, `EntityComponent`) are defined in `@mbler/mcx-component` and re-exported by `@mbler/mcx-core`. They are instantiated during compilation in a VM sandbox to produce Minecraft JSON component files.
+
 ### ItemComponent
-Used to create item JSON components
+
+Used to create item JSON components.
 
 #### Constructor Parameters
+
 ```typescript
 interface ItemComponentOptions {
-  format: string;      // Format version, e.g., "1.21.100"
+  format: string;      // Format version, e.g. "1.21.100"
   name: string;        // Item display name
-  id: string;         // Item unique identifier, e.g., "namespace:item_id"
+  id: string;          // Item unique identifier, e.g. "namespace:item_id"
   components?: ItemComponents; // Optional component configuration
 }
 ```
 
 #### Instance Methods
+
 | Method | Description |
 |--------|-------------|
-| `#ItemComponent#toJSON()` | Generate final JSON object |
-| `#ItemComponent#setName(newValue: string)` | Set item display name |
-| `#ItemComponent#setIcon(newValue: string)` | Set item icon texture |
-| `#ItemComponent#getName()` | Get item display name |
-| `#ItemComponent#setId(newValue: string)` | Set item unique identifier |
-| `#ItemComponent#getId()` | Get item unique identifier |
-| `#ItemComponent#setAllowOffHand(vl: boolean)` | Set whether item can be held in off-hand |
-| `#ItemComponent#setBlockPlacer(config)` | Set block placer component |
-| `#ItemComponent#setCooldown(config)` | Set cooldown component |
-| `#ItemComponent#setCompostable(config)` | Set compostable component |
-| `#ItemComponent#setBundleInteraction(config)` | Set bundle interaction component |
-| `#ItemComponent#setGlint(value: boolean)` | Set glint effect |
-| `#ItemComponent#setHandEquipped(value: boolean)` | Set hand equipped |
-| `#ItemComponent#setDigger(config)` | Set digger component |
-| `#ItemComponent#setDamageAbsorption(config)` | Set damage absorption component |
-| `#ItemComponent#setDurability(config)` | Set durability component |
-| `#ItemComponent#setDurabilitySensor(config)` | Set durability sensor |
-| `#ItemComponent#setDyeable(config)` | Set dyeable component |
-| `#ItemComponent#setEnchantable(config)` | Set enchantable component |
-| `#ItemComponent#setFood(config)` | Set food component |
-| `#ItemComponent#setFireResistant(config)` | Set fire resistant component |
-| `#ItemComponent#setEntityPlacer(config)` | Set entity placer |
-| `#ItemComponent#setFuel(config)` | Set fuel component |
-| `#ItemComponent#setKineticWeapon(config)` | Set kinetic weapon component |
-| `#ItemComponent#setInteractButton(config)` | Set interact button |
-| `#ItemComponent#setHoverTextColor(config)` | Set hover text color |
-| `#ItemComponent#setLiquidClipped(config)` | Set liquid clipped |
-| `#ItemComponent#setMaxStackSize(config)` | Set max stack size |
-| `#ItemComponent#setPiercingWeapon(config)` | Set piercing weapon component |
-| `#ItemComponent#setProjectile(config)` | Set projectile component |
-| `#ItemComponent#setRecord(config)` | Set record component |
-| `#ItemComponent#setRarity(config)` | Set rarity |
-| `#ItemComponent#setRepairable(config)` | Set repairable component |
-| `#ItemComponent#setSeed(config)` | Set seed component |
-| `#ItemComponent#setStackedByData(config)` | Set stacked by data |
-| `#ItemComponent#setShouldDespawn(config)` | Set despawn time |
-| `#ItemComponent#setShooter(config)` | Set shooter component |
-| `#ItemComponent#setStorageWeightModifier(config)` | Set storage weight modifier |
-| `#ItemComponent#setStorageWeightLimit(config)` | Set storage weight limit |
-| `#ItemComponent#setStorageItem(config)` | Set storage item component |
-| `#ItemComponent#setThrowable(config)` | Set throwable component |
-| `#ItemComponent#setTags(tags: string[])` | Set tags |
-| `#ItemComponent#setSwingDuration(duration: number)` | Set swing duration |
-| `#ItemComponent#setUseAnimation(animation)` | Set use animation |
-| `#ItemComponent#setWearable(config)` | Set wearable component |
-| `#ItemComponent#setUseModifiers(config)` | Set use modifiers |
+| `toJSON()` | Generate final JSON object |
+| `setName(newValue: string)` | Set item display name |
+| `setIcon(newValue: string)` | Set item icon texture |
+| `getName()` | Get item display name |
+| `setId(newValue: string)` | Set item unique identifier |
+| `getId()` | Get item unique identifier |
+| `setAllowOffHand(vl: boolean)` | Set whether item can be held in off-hand |
+| `setBlockPlacer(config)` | Set block placer component |
+| `setCooldown(config)` | Set cooldown component |
+| `setCompostable(config)` | Set compostable component |
+| `setBundleInteraction(config)` | Set bundle interaction component |
+| `setGlint(value: boolean)` | Set glint effect |
+| `setHandEquipped(value: boolean)` | Set hand equipped |
+| `setDigger(config)` | Set digger component |
+| `setDamageAbsorption(config)` | Set damage absorption component |
+| `setDurability(config)` | Set durability component |
+| `setDurabilitySensor(config)` | Set durability sensor |
+| `setDyeable(config)` | Set dyeable component |
+| `setEnchantable(config)` | Set enchantable component |
+| `setFood(config)` | Set food component |
+| `setFireResistant(config)` | Set fire resistant component |
+| `setEntityPlacer(config)` | Set entity placer |
+| `setFuel(config)` | Set fuel component |
+| `setKineticWeapon(config)` | Set kinetic weapon component |
+| `setInteractButton(config)` | Set interact button |
+| `setHoverTextColor(config)` | Set hover text color |
+| `setLiquidClipped(config)` | Set liquid clipped |
+| `setMaxStackSize(config)` | Set max stack size |
+| `setPiercingWeapon(config)` | Set piercing weapon component |
+| `setProjectile(config)` | Set projectile component |
+| `setRecord(config)` | Set record component |
+| `setRarity(config)` | Set rarity |
+| `setRepairable(config)` | Set repairable component |
+| `setSeed(config)` | Set seed component |
+| `setStackedByData(config)` | Set stacked by data |
+| `setShouldDespawn(config)` | Set despawn time |
+| `setShooter(config)` | Set shooter component |
+| `setStorageWeightModifier(config)` | Set storage weight modifier |
+| `setStorageWeightLimit(config)` | Set storage weight limit |
+| `setStorageItem(config)` | Set storage item component |
+| `setThrowable(config)` | Set throwable component |
+| `setTags(tags: string[])` | Set tags |
+| `setSwingDuration(duration: number)` | Set swing duration |
+| `setUseAnimation(animation)` | Set use animation |
+| `setWearable(config)` | Set wearable component |
+| `setUseModifiers(config)` | Set use modifiers |
 
 #### Usage Example
+
 ```typescript
 import { ItemComponent } from "@mbler/mcx-core";
 
@@ -369,11 +474,11 @@ const json = itemComponent.toJSON();
 ---
 
 ### BlockComponent
-Used to create block JSON components
 
-**Note**: Current version of BlockComponent only contains basic structure, actual methods are under development.
+Used to create block JSON components.
 
 #### Constructor Parameters
+
 ```typescript
 interface BlockComponentOptions {
   format: string;      // Format version
@@ -383,11 +488,18 @@ interface BlockComponentOptions {
 ```
 
 #### Instance Methods
+
 | Method | Description |
 |--------|-------------|
-| `#BlockComponent#toJSON()` | Generate final JSON object |
+| `toJSON()` | Generate final JSON object |
+| `setBlockHardness(hardness: number)` | Set block hardness |
+| `setBlockExplosionResistance(resistance: number)` | Set explosion resistance |
+| `setFriction(friction: number)` | Set friction coefficient |
+| `setEmissive(emissive: boolean)` | Set emissive lighting |
+| `addComponent(name: string, value: any)` | Add custom component |
 
 #### Usage Example
+
 ```typescript
 import { BlockComponent } from "@mbler/mcx-core";
 
@@ -397,15 +509,21 @@ const blockComponent = new BlockComponent({
   id: "mcx_demo:demo_block"
 });
 
+blockComponent.setBlockHardness(1.5);
+blockComponent.setBlockExplosionResistance(3.0);
+blockComponent.setEmissive(true);
+
 const json = blockComponent.toJSON();
 ```
 
 ---
 
 ### EntityComponent
-Used to create entity JSON components
+
+Used to create entity JSON components.
 
 #### Constructor Parameters
+
 ```typescript
 interface EntityComponentOptions {
   format: string;      // Format version
@@ -415,80 +533,93 @@ interface EntityComponentOptions {
 ```
 
 #### Instance Methods (Partial)
+
 | Method | Description |
 |--------|-------------|
-| `#EntityComponent#toJSON()` | Generate final JSON object |
-| `#EntityComponent#setId(newValue: string)` | Set entity unique identifier |
-| `#EntityComponent#setFormat(newValue: string)` | Set format version |
-| `#EntityComponent#setIsSpawnable(value: boolean)` | Set spawnable |
-| `#EntityComponent#setIsSummonable(value: boolean)` | Set summonable |
-| `#EntityComponent#setAddrider(config)` | Set addrider component |
-| `#EntityComponent#setAdmireItem(config)` | Set admire item component |
-| `#EntityComponent#setAgeable(config)` | Set ageable component |
-| `#EntityComponent#setAngerLevel(config)` | Set anger level |
-| `#EntityComponent#setAngry(config)` | Set angry component |
-| `#EntityComponent#setAnnotationBreakDoor(config)` | Set break door annotation |
-| `#EntityComponent#setAnnotationOpenDoor()` | Set open door annotation |
-| `#EntityComponent#setAttack(config)` | Set attack component |
-| `#EntityComponent#setAreaAttack(config)` | Set area attack component |
-| `#EntityComponent#setAttackCooldown(config)` | Set attack cooldown |
-| `#EntityComponent#setBalloonable(config)` | Set balloonable component |
-| `#EntityComponent#setBarter(config)` | Set barter component |
-| `#EntityComponent#setBlockClimber()` | Set block climber |
-| `#EntityComponent#setBlockSensor(config)` | Set block sensor |
-| `#EntityComponent#setBoostable(config)` | Set boostable component |
-| `#EntityComponent#setBoss(config)` | Set boss component |
-| `#EntityComponent#setBreakBlocks(config)` | Set break blocks |
-| `#EntityComponent#setBreathable(config)` | Set breathable component |
-| `#EntityComponent#setBribeable(config)` | Set bribeable component |
-| `#EntityComponent#setBreedable(config)` | Set breedable component |
-| `#EntityComponent#setBuoyant(config)` | Set buoyant component |
-| `#EntityComponent#setBurnsInDaylight(config)` | Set burns in daylight |
-| `#EntityComponent#setCannotBeAttacked()` | Set cannot be attacked |
-| `#EntityComponent#setCanClimb()` | Set can climb |
-| `#EntityComponent#setCanFly()` | Set can fly |
-| `#EntityComponent#setCanJoinRaid()` | Set can join raid |
-| `#EntityComponent#setCanPowerJump()` | Set can power jump |
-| `#EntityComponent#setCollisionBox(config)` | Set collision box |
-| `#EntityComponent#setColor(config)` | Set color |
-| `#EntityComponent#setColor2(config)` | Set second color |
-| `#EntityComponent#setDespawn(config)` | Set despawn component |
-| `#EntityComponent#setEconomyTradeTable(config)` | Set economy trade table |
-| `#EntityComponent#setEnvironmentSensor(config)` | Set environment sensor |
-| `#EntityComponent#setEquipment(config)` | Set equipment component |
-| `#EntityComponent#setExplode(config)` | Set explode component |
-| `#EntityComponent#setFloating(config)` | Set floating component |
-| `#EntityComponent#setFollower(config)` | Set follower component |
-| `#EntityComponent#setHealth(config)` | Set health component |
-| `#EntityComponent#setHerding(config)` | Set herding component |
-| `#EntityComponent#setHome(config)` | Set home component |
-| `#EntityComponent#setHurtOnCondition(config)` | Set hurt on condition |
-| `#EntityComponent#setInertia(config)` | Set inertia component |
-| `#EntityComponent#setInventory(config)` | Set inventory |
-| `#EntityComponent#setJumpDynamic(config)` | Set dynamic jump |
-| `#EntityComponent#setLeashable(config)` | Set leashable |
-| `#EntityComponent#setLookAtPlayer(config)` | Set look at player |
-| `#EntityComponent#setManaged(config)` | Set managed component |
-| `#EntityComponent#setMountTaming(config)` | Set mount taming |
-| `#EntityComponent#setNavFly(config)` | Set fly navigation |
-| `#EntityComponent#setNavGoal(config)` | Set navigation goal |
-| `#EntityComponent#setProjectile(config)` | Set projectile |
-| `#EntityComponent#setRiderRotates(config)` | Set rider rotates |
-| `#EntityComponent#setScale(config)` | Set scale |
-| `#EntityComponent#setSchedule(config)` | Set schedule |
-| `#EntityComponent#setSensors(config)` | Set sensors |
-| `#EntityComponent#setSkinSettings(config)` | Set skin settings |
-| `#EntityComponent#setSoulSpeed(config)` | Set soul speed |
-| `#EntityComponent#setSpawnEntity(config)` | Set spawn entity |
-| `#EntityComponent#setSwell(config)` | Set swell component |
-| `#EntityComponent#setTameable(config)` | Set tameable |
-| `#EntityComponent#setTeleport(config)` | Set teleport component |
-| `#EntityComponent#setTickWorld(config)` | Set world tick |
-| `#EntityComponent#setTrail(config)` | Set trail |
-| `#EntityComponent#setVariant(config)` | Set variant |
-| `#EntityComponent#setWalkTowards(config)` | Set walk towards |
+| `toJSON()` | Generate final JSON object |
+| `setId(newValue: string)` | Set entity unique identifier |
+| `setFormat(newValue: string)` | Set format version |
+| `setIsSpawnable(value: boolean)` | Set spawnable |
+| `setIsSummonable(value: boolean)` | Set summonable |
+| `setAddrider(config)` | Set addrider component |
+| `setAdmireItem(config)` | Set admire item component |
+| `setAgeable(config)` | Set ageable component |
+| `setAngerLevel(config)` | Set anger level |
+| `setAngry(config)` | Set angry component |
+| `setAnnotationBreakDoor(config)` | Set break door annotation |
+| `setAnnotationOpenDoor()` | Set open door annotation |
+| `setAttack(config)` | Set attack component |
+| `setAreaAttack(config)` | Set area attack component |
+| `setAttackCooldown(config)` | Set attack cooldown |
+| `setBalloonable(config)` | Set balloonable component |
+| `setBarter(config)` | Set barter component |
+| `setBlockClimber()` | Set block climber |
+| `setBlockSensor(config)` | Set block sensor |
+| `setBoostable(config)` | Set boostable component |
+| `setBoss(config)` | Set boss component |
+| `setBreakBlocks(config)` | Set break blocks |
+| `setBreathable(config)` | Set breathable component |
+| `setBribeable(config)` | Set bribeable component |
+| `setBreedable(config)` | Set breedable component |
+| `setBuoyant(config)` | Set buoyant component |
+| `setBurnsInDaylight(config)` | Set burns in daylight |
+| `setCannotBeAttacked()` | Set cannot be attacked |
+| `setCanClimb()` | Set can climb |
+| `setCanFly()` | Set can fly |
+| `setCanJoinRaid()` | Set can join raid |
+| `setCanPowerJump()` | Set can power jump |
+| `setCollisionBox(config)` | Set collision box |
+| `setColor(config)` | Set color |
+| `setColor2(config)` | Set second color |
+| `setDespawn(config)` | Set despawn component |
+| `setEconomyTradeTable(config)` | Set economy trade table |
+| `setEnvironmentSensor(config)` | Set environment sensor |
+| `setEquipment(config)` | Set equipment component |
+| `setExplode(config)` | Set explode component |
+| `setFloating(config)` | Set floating component |
+| `setFollower(config)` | Set follower component |
+| `setHealth(config)` | Set health component |
+| `setHerding(config)` | Set herding component |
+| `setHome(config)` | Set home component |
+| `setHurtOnCondition(config)` | Set hurt on condition |
+| `setInertia(config)` | Set inertia component |
+| `setInventory(config)` | Set inventory |
+| `setJumpDynamic(config)` | Set dynamic jump |
+| `setLeashable(config)` | Set leashable |
+| `setLookAtPlayer(config)` | Set look at player |
+| `setManaged(config)` | Set managed component |
+| `setMountTaming(config)` | Set mount taming |
+| `setNavFly(config)` | Set fly navigation |
+| `setNavGoal(config)` | Set navigation goal |
+| `setProjectile(config)` | Set projectile |
+| `setRiderRotates(config)` | Set rider rotates |
+| `setScale(config)` | Set scale |
+| `setSchedule(config)` | Set schedule |
+| `setSensors(config)` | Set sensors |
+| `setSkinSettings(config)` | Set skin settings |
+| `setSoulSpeed(config)` | Set soul speed |
+| `setSpawnEntity(config)` | Set spawn entity |
+| `setSwell(config)` | Set swell component |
+| `setTameable(config)` | Set tameable |
+| `setTeleport(config)` | Set teleport component |
+| `setTickWorld(config)` | Set world tick |
+| `setTrail(config)` | Set trail |
+| `setVariant(config)` | Set variant |
+| `setWalkTowards(config)` | Set walk towards |
+
+#### Common Methods
+
+| Method | Description |
+|--------|-------------|
+| `setAirborne(isAirborne: boolean)` | Set whether entity is airborne |
+| `setCanFly(canFly: boolean)` | Set whether entity can fly |
+| `setCanSwim(canSwim: boolean)` | Set whether entity can swim |
+| `setHealth(health: number)` | Set health value |
+| `setMovementSpeed(speed: number)` | Set movement speed |
+| `addComponent(name: string, value: any)` | Add custom component |
 
 #### Usage Example
+
 ```typescript
 import { EntityComponent } from "@mbler/mcx-core";
 
@@ -504,23 +635,14 @@ entityComponent.setHealth({ value: 20, max: 20 });
 const json = entityComponent.toJSON();
 ```
 
-#### Common Methods
-| Method | Description |
-|--------|-------------|
-| `setAirborne(isAirborne: boolean)` | Set whether entity is airborne |
-| `setCanFly(canFly: boolean)` | Set whether entity can fly |
-| `setCanSwim(canSwim: boolean)` | Set whether entity can swim |
-| `setHealth(health: number)` | Set health value |
-| `setMovementSpeed(speed: number)` | Set movement speed |
-| `addComponent(name: string, value: any)` | Add custom component |
-| `toJSON()` | Generate final JSON object |
-
 ---
 
 ### ImageComponent
-Used to create image components (PNG, JPG, SVG, GIF)
+
+Used to create image components (PNG, JPG, SVG, GIF).
 
 #### Basic Usage
+
 ```typescript
 import {
   PNGImageComponent,
@@ -554,12 +676,106 @@ const gifImage = new GIFImageComponent("./textures/item/demo.gif");
 ---
 
 ### ComponentType
-Type export module, provides type definitions for components
+
+Type export namespace, provides type definitions for components.
 
 ```typescript
-import * as ComponentType from "@mbler/mcx-core/ComponentType";
+import { ComponentType } from "@mbler/mcx-core";
+// ComponentType.ItemComponentOptions
+// ComponentType.BlockComponentOptions
+// ComponentType.EntityComponentOptions
+// ComponentType.SoundEvent, ParticleType, EnchantableSlot, Rarity, etc.
+```
 
-// ItemComponentType - Item component type definition
-// BlockComponentType - Block component type definition
-// EntityComponentType - Entity component type definition
+---
+
+## PubType
+
+Internal type definitions namespace.
+
+```typescript
+import { PubType } from "@mbler/mcx-core";
+// PubType.Token, PubType.ParsedTagNode, PubType.PropNode, PubType.transformCtx, etc.
+```
+
+---
+
+## compile_component
+
+Internal component compilation namespace.
+
+```typescript
+import { compile_component } from "@mbler/mcx-core";
+
+compile_component.compileComponent(compiledCode, ctx): Promise<void>;
+compile_component.clearCachedOptions(): void;
+compile_component.resolveFilePoint(point, ctx, sourceIsMcxCore?): string;
+compile_component.execEdit(option, ctx, isMcxCoreSource?): Promise<void>;
+compile_component.generateItemTextureJson(output): Promise<void>;
+compile_component.RunScript; // Class: runs JS in Node.js VM sandbox
+compile_component.execESMMethod; // Enum: transformCjs | runInVm | importESM
+compile_component.transformESMToCJS(code: string): string;
+```
+
+---
+
+## @mbler/mcx-component
+
+The `@mbler/mcx-component` package provides the component builder classes. It is a dependency of `@mbler/mcx-core` and its exports are re-exported through `@mbler/mcx-core`.
+
+### Installation
+
+```bash
+npm install @mbler/mcx-component
+```
+
+### Exports
+
+```typescript
+import {
+  ItemComponent,
+  BlockComponent,
+  EntityComponent,
+  PNGImageComponent,
+  JPGImageComponent,
+  SVGImageComponent,
+  GIFImageComponent,
+  compareVar,  // Semantic version comparison
+} from "@mbler/mcx-component";
+```
+
+### Enums
+
+| Export | Description |
+|--------|-------------|
+| `SoundEventEnum` | All Minecraft sound event strings |
+| `ParticleTypeEnum` | All particle type strings |
+| `EnchantableSlotEnum` / `EnchantableSlotArray` | All enchantable slot strings |
+
+### FileEdit Helpers
+
+```typescript
+import { createFileEdit } from "@mbler/mcx-component";
+const edit = createFileEdit<MyType>({ /* expression */ });
+```
+
+---
+
+## create-mbler
+
+The `create-mbler` package provides a CLI scaffolding tool for new mbler projects.
+
+### Usage
+
+```bash
+npm create mbler [dir] -- --language [zh|en]
+```
+
+### API
+
+```typescript
+import { cli, getI18n } from "create-mbler";
+
+cli(): void;  // Run the scaffolder
+getI18n(key: I18nKey, language: Language): string;
 ```

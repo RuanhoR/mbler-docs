@@ -1,5 +1,5 @@
 # Mbler API
----
+
 ## Installation
 
 ```bash
@@ -68,7 +68,13 @@ require("mbler/build");
   Build: [class Build],
   build: [Function: build],
   watch: [Function: watch],
-  McxTsc: [Function: McxTsc]
+  McxTsc: [Function: McxTsc],
+  Sapi: [Module],
+  BuildCacheManager: [class BuildCacheManager],
+  Progress: [class Progress]
+  generateRelease: [Function: generateRelease],
+  terserPlugin: [Function: terserPlugin],
+  esbuildPlugin: [Function: esbuildPlugin],
 }*/
 ```
 
@@ -133,7 +139,7 @@ const cmdList: readonly [
   "c", "work", "help", "h", "init", "version",
   "build", "watch", "lang", "set-work-dir",
   "publish", "unpublish", "install", "uninstall",
-  "login", "profile", "view", "config"
+  "login", "profile", "view", "config", "log"
 ];
 ```
 
@@ -176,11 +182,11 @@ interface MblerConfigData {
   displayName?: string;
   description: string;
   version: string;
-  mcVersion: string | string[];
+  mcVersion: string;
   outdir?: MblerConfigOutdir;
   script?: MblerConfigScript;
-  minify?: boolean | 'oxc' | 'terser' | 'esbuild';
-  build?: MblerBuildConfig;
+  minify?: 'oxc' | 'terser' | 'esbuild';
+  build?: Partial<MblerBuildConfig>;
 }
 ```
 
@@ -189,11 +195,11 @@ interface MblerConfigData {
 - `displayName?: string` - Optional display name shown in manifest.json; falls back to `name` if not set
 - `description: string` - Project description (required)
 - `version: string` - Project version (required)
-- `mcVersion: string | string[]` - Minecraft version (required)
+- `mcVersion: string` - Minecraft version (required)
 - `outdir?: MblerConfigOutdir` - Output directory configuration
 - `script?: MblerConfigScript` - Script configuration
-- `minify?: boolean` - Whether to compress code
-- `build?: MblerBuildConfig` - Build configuration
+- `minify?: 'oxc' | 'terser' | 'esbuild'` - Minification engine (default: 'oxc')
+- `build?: Partial<MblerBuildConfig>` - Build configuration
 
 ---
 
@@ -243,22 +249,32 @@ Build configuration interface.
 
 ```typescript
 interface MblerBuildConfig {
-  rollupPlugins?: Plugin[];
-  cache?: "auto" | "enable" | "disable";
-  bundle?: boolean;
-  onEnd?: (config: MblerConfigData) => Promise<void>;
-  onStart?: (config: MblerConfigData) => Promise<void>;
-  onWarn?: (config: MblerConfigData, warning: Error) => void;
+  rollupPlugins: Plugin[];
+  rollupExternal: string[];
+  cache: 'none' | 'memory' | 'file' | 'filesystem' | 'auto';
+  cachePath: string;
+  bundle: boolean;
+  clean?: boolean;
+  outputDir: string;
+  outputFilename: string;
+  onEnd: (ctx: MblerConfigData) => void | Promise<void>;
+  onStart: (ctx: MblerConfigData) => void | Promise<void>;
+  onWarn: (ctx: MblerConfigData, warning: Error) => void | Promise<void>;
 }
 ```
 
 **Properties:**
-- `rollupPlugins?: Plugin[]` - Custom Rollup plugins
-- `cache?: "auto" | "enable" | "disable"` - Cache mode
-- `bundle?: boolean` - Whether to bundle
-- `onEnd?: (config: MblerConfigData) => Promise<void>` - Build complete callback
-- `onStart?: (config: MblerConfigData) => Promise<void>` - Build start callback
-- `onWarn?: (config: MblerConfigData, warning: Error) => void` - Warning callback
+- `rollupPlugins: Plugin[]` - Custom Rollup plugins
+- `rollupExternal: string[]` - Additional external modules
+- `cache: 'none' | 'memory' | 'file' | 'filesystem' | 'auto'` - Cache mode
+- `cachePath: string` - Cache file path
+- `bundle: boolean` - Whether to bundle scripts via Rollup (default: true)
+- `clean?: boolean` - Clean output dirs before build (default: true)
+- `outputDir: string` - Output subdirectory (default: 'scripts')
+- `outputFilename: string` - Force output filename
+- `onEnd: (ctx: MblerConfigData) => void | Promise<void>` - Build complete callback
+- `onStart: (ctx: MblerConfigData) => void | Promise<void>` - Build start callback
+- `onWarn: (ctx: MblerConfigData, warning: Error) => void | Promise<void>` - Warning callback
 
 ---
 
@@ -420,15 +436,16 @@ Language management class.
 
 ```typescript
 class Lang {
+  currentLang: "zh" | "en";
   init(): void;
-  set(newLang: "zh" | "en"): void;
+  set(newLang: "zh" | "en"): boolean;
   get(): language;
 }
 ```
 
 #### i18n#Lang#init
 
-Initialize language settings.
+Initialize language settings (reads from `~/.cache/mbler/lang.db`).
 
 ```typescript
 init(): void;
@@ -441,11 +458,14 @@ init(): void;
 Set current language.
 
 ```typescript
-set(newLang: "zh" | "en"): void;
+set(newLang: "zh" | "en"): boolean;
 ```
 
 **Parameters:**
 - `newLang: "zh" | "en"` - Language type
+
+**Return Value:**
+- `boolean` - Whether setting succeeded
 
 ---
 
@@ -459,6 +479,63 @@ get(): language;
 
 **Return Value:**
 - `language` - Current language configuration
+
+---
+
+## Logger
+
+Logger writes to `~/.cache/mbler/latest.log`.
+
+```typescript
+class Logger {
+  static i(tag: string, msg: string): void;  // INFO
+  static w(tag: string, msg: string): void;  // WARN
+  static e(tag: string, msg: string): void;  // ERROR
+  static d(tag: string, msg: string): void;  // DEBUG
+  static LogFile: string;                     // Current log file path
+}
+```
+
+---
+
+## UUID
+
+Deterministic UUID generation.
+
+```typescript
+import { fromString } from "mbler"; // or from "mbler/uuid"
+
+function fromString(input: string, salt?: string): string;
+```
+
+**Parameters:**
+- `input: string` - Input string
+- `salt?: string` - Optional salt (defaults to internal salt)
+
+**Return Value:**
+- `string` - Deterministic UUID v4
+
+---
+
+## Utilities
+
+Utility functions exported from the main entry.
+
+```typescript
+function ReadProjectMblerConfig(project: string): Promise<MblerConfigData>;
+function readFileAsJson<T>(filePath: string): Promise<T>;
+function writeJSON(filePath: string, data: unknown): Promise<void>;
+function showText(text: string, needNextLine?: boolean): void;
+function input(tip?: string, show?: boolean): Promise<string>;
+function fileExists(file: string): Promise<boolean>;
+function findReadme(dir: string): Promise<string | null>;
+function join(baseDir: string, inputPath: string): string;
+function stringToNumberArray(str: string): [number, number, number];
+function compareVersion(a: string, b: string): number;
+function isValidVersion(version: string): boolean;
+function runCommand(param: string[], cwd: string, stdio: string): Promise<{ code: number | null; data: string }>;
+function sleep(time: number): Promise<void>;
+```
 
 ---
 
@@ -594,11 +671,92 @@ closeWatchers(): void;
 
 ### Build#McxTsc
 
-MCX TypeScript compiler.
+MCX TypeScript compiler (Volar-based).
 
 ```typescript
-class McxTsc {
-  constructor();
-  transform(code: string, options?: object): string;
+function McxTsc(tscpath?: string): void;
+```
+
+**Parameters:**
+- `tscpath?: string` - Path to TypeScript's tsc.js (default: `require.resolve('typescript/lib/tsc')`)
+
+**Description:**
+Runs the TypeScript compiler with MCX language support, providing type checking for `.mcx` files and image imports.
+
+---
+
+### Build#Sapi
+
+SAPI version resolver — fetches `@minecraft/server` version map from npm.
+
+```typescript
+namespace Sapi {
+  function refresh(): Promise<void>;
+  function generateVersion(
+    module: string,
+    mcVersion: string,
+    isBeta: boolean,
+    withFull: boolean
+  ): string;
 }
+```
+
+---
+
+### Build#BuildCacheManager
+
+Cache manager for incremental builds.
+
+```typescript
+class BuildCacheManager {
+  constructor(baseDir: string, mode?: string, isWatch?: boolean, cachePath?: string);
+  getMode(): string;
+  shouldUseIncrementalBuild(): boolean;
+}
+```
+
+---
+
+### Build#Progress
+
+Progress bar display.
+
+```typescript
+class Progress {
+  constructor(max: number);
+  update(current: number): void;
+}
+```
+
+---
+
+### Build#terserPlugin
+
+Rollup plugin for terser minification (requires `terser` to be installed in the project).
+
+```typescript
+function terserPlugin(baseDir: string): Plugin;
+```
+
+---
+
+### Build#esbuildPlugin
+
+Rollup plugin for esbuild minification (requires `esbuild` to be installed in the project).
+
+```typescript
+function esbuildPlugin(baseDir: string): Plugin;
+```
+
+---
+
+### Build#generateRelease
+
+Zip output directories into `.mcaddon` file.
+
+```typescript
+function generateRelease(build: {
+  outdirs: { behavior: string; resources: string; dist: string };
+  module: 'behavior' | 'resources' | 'all';
+}): Promise<void>;
 ```
