@@ -20,7 +20,7 @@ npm install @mbler/mcx-core --save
 
 ### Component API Overview
 
-`@mbler/mcx-core` exports the following component classes:
+`@mbler/mcx-component` exports the following component classes(need install):
 
 ```javascript
 import {
@@ -32,7 +32,7 @@ import {
   SVGImageComponent,
   GIFImageComponent,
   ComponentType,
-} from "@mbler/mcx-core";
+} from "@mbler/mcx-component";
 ```
 
 ## Usage
@@ -114,7 +114,7 @@ Demonstration
   </items>
 </Component>
 <script>
-import { ItemComponent } from "@mbler/mcx-core"
+import { ItemComponent } from "@mbler/mcx-component"
 const itemComponent = new ItemComponent({
   format: "1.21.100", // format version
   name: "Demo Item",
