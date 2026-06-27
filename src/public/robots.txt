@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://mbler-docs.ruanhor.dpdns.org/sitemap.xml
+Sitemap: https://en-d.pmnx.qzz.io/sitemap.xml
