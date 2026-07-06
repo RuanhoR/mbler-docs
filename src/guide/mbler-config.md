@@ -87,6 +87,19 @@ outdir: {
 }
 ```
 
+### `outGameOnDev`
+
+Output build results directly into the Minecraft game directory's `development_behavior_packs` and `development_resource_packs`, eliminating manual copying during development.
+
+- Type: `boolean`
+- Default: `false`
+- When enabled, prompts for the game directory path (reuses the same prompt logic as `mbler install`; the path is cached in global config), and build output goes directly to the game's development pack folders
+- When `BUILD_MODULE=release` is set, this option is ignored and the original `outdir` config is used instead (to support release packaging)
+
+```js
+outGameOnDev: true,
+```
+
 ### `minify`
 
 Minification engine for bundled script output.
