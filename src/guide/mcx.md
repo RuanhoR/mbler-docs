@@ -51,20 +51,97 @@ MCX is currently divided into the following kinds:
 
 ### UI MCX
 
-Example:
+Build in-game forms with two modes:
+
+- **`<Ui>`** — CustomForm (reactive, Observable bindings). Requires `@minecraft/server-ui` >= 2.1.
+- **`<Form>`** — Legacy FormData (ModalFormData / ActionFormData / MessageFormData). Works on any version.
+
+#### Available Tags
+
+Tags map to the underlying Minecraft form API methods:
+
+| Tag | `<Ui>` (CustomForm) | `<Form type="modal">` (ModalFormData) | `<Form type="action">` (ActionFormData) | `<Form type="message">` (MessageFormData) |
+|-----|---------------------|---------------------------------------|----------------------------------------|------------------------------------------|
+| `title` | constructor arg | `.title()` | `.title()` | `.title()` |
+| `label` | `.label()` | `.label()` | `.label()` | — |
+| `header` | `.header()` | `.header()` | `.header()` | — |
+| `body` | — | `.label()` | `.body()` | `.body()` |
+| `divider` | `.divider()` | `.divider()` | `.divider()` | — |
+| `spacer` | `.spacer()` | — | — | — |
+| `close-button` | `.closeButton()` | — | — | — |
+| `input` / `textField` | `.textField()` | `.textField()` | — | — |
+| `toggle` | `.toggle()` | `.toggle()` | — | — |
+| `dropdown` | `.dropdown()` | `.dropdown()` | — | — |
+| `slider` | `.slider()` | `.slider()` | — | — |
+| `submit` | — | `.submitButton()` | — | — |
+| `button` | `.button()` | — | `.button()` | — |
+| `button-m` | — | — | — | `.button1()` / `.button2()` |
+
+#### Legacy Form (non-reactive)
 
 ```
-<Ui>
-  <button click="hello">{{ title }}</button>
-</Ui>
+<Form>
+  <title>Hello</title>
+  <label>Welcome, {{ playerName }}!</label>
+  <button click="close">Close</button>
+</Form>
 <script>
-  export const hello = function() {
-    console.log("Hello world")
-  }
+  export const prop = ["playerName"];
+  export function close() { /* close */ }
 </script>
 ```
 
-Usage in other files:
+#### CustomForm with Setup Mode (reactive)
+
+```
+<Ui setup>
+  <title>Settings</title>
+  <input>{{ name }}</input>
+  <toggle>{{ enabled }}</toggle>
+  <button click="save">Save</button>
+</Ui>
+<script>
+import { onMounted } from "@mbler/mcx";
+
+const name = defineProp("Player")
+const enabled = defineProp(true)
+
+onMounted(() => { /* runs every show */ })
+
+function save() { /* name.value gets current value */ }
+</script>
+```
+
+#### Explicit Form Type
+
+Override the automatic form type detection by adding `type`:
+
+```
+<Ui type="action">
+  <button click="hello">{{ title }}</button>
+</Ui>
+
+<Form type="modal">
+  <input>{{ name }}</input>
+</Form>
+```
+
+Supported types: `modal`, `action`, `message`.
+
+#### For Loops
+
+Iterate over arrays with `in` or `of`:
+
+```
+<Ui setup>
+  <input for="item in items">{{ item }}</input>
+</Ui>
+<script>
+const items = ["A", "B", "C"]
+</script>
+```
+
+#### Usage in other files
 
 ```javascript
 import UI from "./ui.mcx";

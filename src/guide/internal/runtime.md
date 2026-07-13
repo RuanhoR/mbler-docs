@@ -162,7 +162,7 @@ event.subscribe("PlayerJoin");
 
 ## ui
 
-Builds and shows Minecraft Bedrock UI forms (ModalFormData, ActionFormData, MessageFormData).
+Builds and shows Minecraft Bedrock UI forms. The compiled output uses either the legacy FormData API or the modern CustomForm (reactive), depending on whether `<Form>` or `<Ui>` is used.
 
 ```typescript
 class ui {
@@ -201,14 +201,18 @@ show(player: Player, prop: Record<string, any>): Promise<void>;
 | Type | UI Form Type | Description |
 |------|-------------|-------------|
 | `title` | All | Form title |
+| `label` | CustomForm | Label text |
+| `header` | CustomForm | Header text |
 | `body` | ModalForm, ActionForm | Label/body text |
-| `divider` | ModalForm, ActionForm | Visual divider |
-| `input` | ModalForm | Text input field |
-| `slider` | ModalForm | Slider control |
-| `toggle` | ModalForm | Toggle switch |
-| `dropdown` | ModalForm | Dropdown selection |
+| `divider` | All | Visual divider |
+| `spacer` | CustomForm | Empty spacing |
+| `close-button` | CustomForm | Close button |
+| `input` / `textField` | ModalForm, CustomForm | Text input field |
+| `slider` | ModalForm, CustomForm | Slider control |
+| `toggle` | ModalForm, CustomForm | Toggle switch |
+| `dropdown` | ModalForm, CustomForm | Dropdown selection |
 | `submit` | ModalForm | Submit button |
-| `button` | ActionForm | Action button |
+| `button` | ActionForm, CustomForm | Action button |
 | `button-m` | MessageForm | Message dialog button |
 
 ### Dynamic Prop Binding
@@ -216,8 +220,21 @@ show(player: Player, prop: Record<string, any>): Promise<void>;
 UI MCX supports runtime property binding:
 
 - **Content binding**: `{{ propName }}` — resolved at runtime via `prop.propName`
-- **Param binding**: `:param="propName"` — resolved via `{ useProp: "propName" }`
+- **Param binding**: `:param="propName"` — resolved via arrow function `(s) => s.propName`
 - **Click handler**: `<button click="functionName">` — resolved from script exports
+- **Reactive content**: In `<Ui>` mode, `{{ }}` expressions create `Computation` instances with automatic dependency tracking
+- **For loops**: `for="item in items"` or `for="item of items"` — iterate over arrays, element type is respected (no longer always `textField`)
+- **Explicit form type**: `<Ui type="modal">` or `<Form type="action">` to override automatic type detection
+- **Nested elements**: Container tags are recursively flattened; child elements are included inline
+
+### Setup Mode
+
+When `<Ui setup>` or `<Form setup>` is used, the compiler enables:
+
+- **`defineProp(defaultValue)`** — declares a reactive prop with an Observable type inferred from the default value
+- **`onStartup(cb)`** — lifecycle hook that runs once before the first form display
+- **`onMounted(cb)`** — lifecycle hook that runs every time the form is shown
+- **Auto-collect declarations** — all top-level variables and functions are automatically included in the setup return, no manual `export` needed
 
 ### Usage Example
 
