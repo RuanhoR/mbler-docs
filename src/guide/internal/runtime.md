@@ -196,6 +196,23 @@ show(player: Player, prop: Record<string, any>): Promise<void>;
 - `player: Player` — Target player
 - `prop: Record<string, any>` — Runtime properties to bind (resolves `{{ propName }}` and `:param` bindings)
 
+### showForm
+
+Convenience function to show a compiled UI/Form MCX file.
+
+```typescript
+function showForm(
+  formMcx: MCXFile<'ui'>,
+  player: Player,
+  prop?: Record<string, any>
+): Promise<void>;
+```
+
+**Parameters:**
+- `formMcx: MCXFile<'ui'>` — Compiled UI/Form MCX module (the default export of a `.mcx` file)
+- `player: Player` — Target player
+- `prop: Record<string, any>` — (Optional) Runtime properties to bind
+
 ### UI Layout Types
 
 | Type | UI Form Type | Description |
@@ -240,11 +257,12 @@ When `<Ui setup>` or `<Form setup>` is used, the compiler enables:
 
 ```javascript
 import ui from "./ui.mcx";
+import { showForm } from "@mbler/mcx";
 import { world, system } from "@minecraft/server";
 
 system.run(() => {
   const player = world.getPlayers()[0];
-  ui.app.ui.show(player, { title: "Hello!" });
+  showForm(ui, player, { title: "Hello!" });
 });
 ```
 

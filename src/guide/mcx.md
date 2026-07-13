@@ -101,11 +101,12 @@ Tags map to the underlying Minecraft form API methods:
   <button click="save">Save</button>
 </Ui>
 <script>
-import { onMounted } from "@mbler/mcx";
+import { onStartup, onMounted } from "@mbler/mcx";
 
 const name = defineProp("Player")
 const enabled = defineProp(true)
 
+onStartup(() => { /* runs once before first show */ })
 onMounted(() => { /* runs every show */ })
 
 function save() { /* name.value gets current value */ }
@@ -145,11 +146,12 @@ const items = ["A", "B", "C"]
 
 ```javascript
 import UI from "./ui.mcx";
+import { showForm } from "@mbler/mcx";
 import { system, world } from "@minecraft/server";
 
 system.run(() => {
   const players = world.getPlayers();
-  UI.app.ui.show(players[0], {
+  showForm(UI, players[0], {
     title: "TEST",
   });
 });
