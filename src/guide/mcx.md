@@ -60,22 +60,22 @@ Build in-game forms with two modes:
 
 Tags map to the underlying Minecraft form API methods:
 
-| Tag | `<Ui>` (CustomForm) | `<Form type="modal">` (ModalFormData) | `<Form type="action">` (ActionFormData) | `<Form type="message">` (MessageFormData) |
-|-----|---------------------|---------------------------------------|----------------------------------------|------------------------------------------|
-| `title` | constructor arg | `.title()` | `.title()` | `.title()` |
-| `label` | `.label()` | `.label()` | `.label()` | — |
-| `header` | `.header()` | `.header()` | `.header()` | — |
-| `body` | — | `.label()` | `.body()` | `.body()` |
-| `divider` | `.divider()` | `.divider()` | `.divider()` | — |
-| `spacer` | `.spacer()` | — | — | — |
-| `close-button` | `.closeButton()` | — | — | — |
-| `input` / `textField` | `.textField()` | `.textField()` | — | — |
-| `toggle` | `.toggle()` | `.toggle()` | — | — |
-| `dropdown` | `.dropdown()` | `.dropdown()` | — | — |
-| `slider` | `.slider()` | `.slider()` | — | — |
-| `submit` | — | `.submitButton()` | — | — |
-| `button` | `.button()` | — | `.button()` | — |
-| `button-m` | — | — | — | `.button1()` / `.button2()` |
+| Tag                   | `<Ui>` (CustomForm) | `<Form type="modal">` (ModalFormData) | `<Form type="action">` (ActionFormData) | `<Form type="message">` (MessageFormData) |
+| --------------------- | ------------------- | ------------------------------------- | --------------------------------------- | ----------------------------------------- |
+| `title`               | constructor arg     | `.title()`                            | `.title()`                              | `.title()`                                |
+| `label`               | `.label()`          | `.label()`                            | `.label()`                              | —                                         |
+| `header`              | `.header()`         | `.header()`                           | `.header()`                             | —                                         |
+| `body`                | —                   | `.label()`                            | `.body()`                               | `.body()`                                 |
+| `divider`             | `.divider()`        | `.divider()`                          | `.divider()`                            | —                                         |
+| `spacer`              | `.spacer()`         | —                                     | —                                       | —                                         |
+| `close-button`        | `.closeButton()`    | —                                     | —                                       | —                                         |
+| `input` / `textField` | `.textField()`      | `.textField()`                        | —                                       | —                                         |
+| `toggle`              | `.toggle()`         | `.toggle()`                           | —                                       | —                                         |
+| `dropdown`            | `.dropdown()`       | `.dropdown()`                         | —                                       | —                                         |
+| `slider`              | `.slider()`         | `.slider()`                           | —                                       | —                                         |
+| `submit`              | —                   | `.submitButton()`                     | —                                       | —                                         |
+| `button`              | `.button()`         | —                                     | `.button()`                             | —                                         |
+| `button-m`            | —                   | —                                     | —                                       | `.button1()` / `.button2()`               |
 
 #### Legacy Form (non-reactive)
 
@@ -111,20 +111,6 @@ onMounted(() => { /* runs every show */ })
 
 function save() { /* name.value gets current value */ }
 </script>
-```
-
-#### Explicit Form Type
-
-Override the automatic form type detection by adding `type`:
-
-```
-<Ui type="action">
-  <button click="hello">{{ title }}</button>
-</Ui>
-
-<Form type="modal">
-  <input>{{ name }}</input>
-</Form>
 ```
 
 Supported types: `modal`, `action`, `message`.
