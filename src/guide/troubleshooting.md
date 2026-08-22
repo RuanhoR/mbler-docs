@@ -68,6 +68,15 @@ The MCX TypeScript compiler (`mcx-tsc`) uses Volar under the hood. If it produce
 
 **Solution:** Check that `tsconfig.json` exists in your project root and that it includes your `.mcx` files.
 
+### Command rejected due to shell metacharacters on Windows
+
+Mbler no longer depends on `cross-spawn` and launches commands with Node's built-in `child_process`. On Windows, when a command is started through the shell via a `.cmd` shim, arguments containing cmd metacharacters (`& | < > ^ % ! "` or line breaks) are rejected with an explicit error instead of being executed (fail-closed security hardening).
+
+**Notes:**
+
+- Paths containing spaces are quoted automatically and keep working
+- Behavior on Linux/macOS is unchanged
+
 ---
 
 ## FAQ

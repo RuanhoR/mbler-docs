@@ -42,6 +42,14 @@ mbler version -show commit
 # Output: commit: xxx
 ```
 
+Passing a version argument sets the project version:
+
+```bash
+mbler version <x.y.z>
+```
+
+This writes the new version back to `package.json` in the project root. Only `package.json` is updated — other configuration files are left untouched.
+
 ## `build` Command
 
 Build the project as an mc addon. If `BUILD_MODULE` in the env is `build`, it will additionally generate a package that can be imported into the game.

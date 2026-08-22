@@ -42,6 +42,8 @@ Then, a template package will be generated automatically, and you can try to mod
 
 ## Detailed Overview
 
+> **Note:** The content of the `<script>` tag is always parsed as TypeScript + JSX, regardless of whether the `lang` attribute is set. TypeScript-only syntax such as generics (`Map<string, number>`) and typed arrow functions compiles without declaring `lang="ts"`, and plain JavaScript remains fully compatible since TS is a superset of JS. The `lang` attribute is still accepted and does not cause an error.
+
 MCX is currently divided into the following kinds:
 
 - UI MCX
@@ -201,6 +203,8 @@ Explanation
       - item declares an item to be defined from the script export, the content is the export string, and the attribute id is the file Id
 - Script
   - Must implement the export defined in the Component, otherwise it will throw an error during compilation
+- Tag type checking
+  - A clear compile-time error is thrown when a child tag type does not match the `<Component>` definition, instead of being silently skipped
 
 For component exports from @mbler/mcx-core, see [MCX Core API Reference](./internal/mcx)
 
