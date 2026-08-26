@@ -58,6 +58,40 @@ Build the project as an mc addon. If `BUILD_MODULE` in the env is `build`, it wi
 
 Monitor changes and build in real time. No parameters, depends on the working directory context.
 
+### `--enable-dev-ws`
+
+Starts a WebSocket server that enables in-game live reload. After starting the watcher with this flag:
+
+1. The server listens on `ws://localhost:19145` (default port)
+2. In Minecraft, run `/connect ws://localhost:19145` to connect
+3. When file changes trigger a rebuild, mbler automatically sends reload commands to all connected game clients
+
+```bash
+pnpm dev --enable-dev-ws
+```
+
+Options:
+
+- `--dev-ws-port <n>` — Custom WebSocket server port (default: `19145`)
+
+Reload behavior:
+
+| Changed files | Command sent |
+|---|---|
+| Script files (`.ts`, `.js`, `.mcx`, `.mjs`) | `/reload` |
+| Resource/manifest/other files | `/reload all` |
+
+![Enable Dev WS (English)](/static/img-demo-enable-ws-en.png)
+
+You can also enable it statically in `mbler.config.js`:
+
+```js
+build: {
+  devWs: true,
+  // devWsPort: 3000  // optional custom port
+}
+```
+
 ## `set-work-dir` Command
 
 Set work dir manger mode.  
