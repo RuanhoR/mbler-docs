@@ -14,7 +14,7 @@ export default defineConfig({
     lang: "ts",
     main: "index.ts",
   },
-  minify: false,
+  minify: "oxc",
 });
 ```
 
@@ -100,17 +100,81 @@ Output build results directly into the Minecraft game directory's `development_b
 outGameOnDev: true,
 ```
 
+### `manifest`
+
+Full control over the generated `manifest.json`. The section is applied to **both** the behavior pack and the resource pack manifests. A user-supplied `manifest.json` in the pack source folders is still shallow-merged over the generated one (see [Project Structure](./project)).
+
+- Type: `object`
+
+Fields:
+
+- `pack_scope` — Resource pack scope: `'any'` (default), `'world'`, or `'global'`
+- `platform_locked` — `boolean`. Forbids using the pack in other players' worlds or servers.
+- `base_game_version` — `string`. World template base game version.
+- `allow_random_seed` — `boolean`. World template uses a random seed.
+- `lock_template_options` — `boolean`. World template locks world options by default.
+- `capabilities` — `string[]`. Extra capabilities. Allowed values: `'chemistry'`, `'editorExtension'`, `'experimental_custom_ui'`, `'pbr'`, `'raytraced'`, `'script_eval'`. For packs with scripts, `'script_eval'` is added automatically and user values are merged and deduplicated.
+- `dependencies` — Array of dependency objects, appended after the automatically generated Script API dependencies (`@minecraft/server`, plus `@minecraft/server-ui` when `script.ui` is enabled, plus `build.otherDeps`). Two forms are supported:
+  - Pack dependency (dependency on another pack by UUID): `{ uuid: string, version: string | number[], name?: string }`
+  - Script module dependency: `{ module_name?: string, uuid?: string, version: string }` (the version may be `'beta'` since Minecraft 1.21.120)
+- `subpacks` — Array of `{ name, folder_name, memory_tier, memory_performance_tier? }`.
+- `settings` — Array of in-game addon setting controls:
+  - `{ type: 'label', text? }`
+  - `{ type: 'input', text?, name, default? }`
+  - `{ type: 'toggle', text?, name, default? }`
+  - `{ type: 'slider', text?, name, min?, max?, step?, default? }`
+  - `{ type: 'dropdown', text?, name, options?, default? }` — each option is either a plain string or `{ text, name }`
+- `metadata` — `{ authors?: string[], license?: string, url?: string, product_type? }`. Setting `product_type: 'addon'` marks the pack as part of an addon (behavior packs then don't disable achievements). `metadata.generated_with` is auto-injected by Mbler as `{ mbler: [version] }` and cannot be overridden.
+
+::: tip
+`format_version` is always `2` and not configurable.
+:::
+
+In TypeScript configs, the enums `MblerPackScope`, `MblerManifestCapability`, `MblerManifestSettingType` (`'label' | 'input' | 'toggle' | 'slider' | 'dropdown'`) and `MblerManifestProductType` are exported from `mbler`. In plain JavaScript configs, write the plain string values.
+
+```js
+manifest: {
+  pack_scope: "global",
+  platform_locked: false,
+  capabilities: ["experimental_custom_ui"],
+  dependencies: [
+    { uuid: "5c52e969-af53-4def-b6a4-fbc3f34fcb35", version: [1, 0, 0], name: "my-library" },
+    { module_name: "@minecraft/server-net", version: "1.0.0-beta" },
+  ],
+  subpacks: [
+    { name: "high", folder_name: "high_res", memory_tier: 4 },
+  ],
+  settings: [
+    { type: "label", text: "Addon settings" },
+    { type: "toggle", text: "Enable particles", name: "particles", default: true },
+    { type: "slider", text: "Volume", name: "volume", min: 0, max: 100, step: 1, default: 50 },
+    { type: "dropdown", text: "Theme", name: "theme", options: ["light", "dark"], default: "light" },
+  ],
+  metadata: {
+    authors: ["Ruanhor"],
+    license: "MIT",
+    url: "https://github.com/RuanhoR/mbler",
+    product_type: "addon",
+  },
+}
+```
+
 ### `minify`
 
 Minification engine for bundled script output.
 
-- Type: `boolean | 'oxc' | 'terser' | 'esbuild'`
-- Default: `false`
-- When set to `true`, uses the default minifier. Set to a specific engine name (`'oxc'`, `'terser'`, `'esbuild'`) to choose a particular minifier.
+- Type: `'oxc' | 'terser' | 'esbuild' | 'none'`
+- Default: `'oxc'` (when the field is omitted)
+- Set to a specific engine name (`'oxc'`, `'terser'`, `'esbuild'`) to choose a particular minifier.
+- Set to `'none'` to disable script minification entirely — the output stays readable.
 
 ### `build`
 
 Advanced build configuration.
+
+::: tip
+Script output location is fixed: compiled scripts are always written to the `scripts/` directory inside the behavior pack. The output filename is derived from `script.main` (with the extension normalized to `.js`); for `script.lang: "mcx"` projects it is always `scripts/index.js`. This is not configurable.
+:::
 
 ```js
 build: {
@@ -159,20 +223,6 @@ Whether to bundle scripts via Rolldown.
 - Type: `boolean`
 - Default: `true`
 - When `false`, scripts are copied verbatim without bundling
-
-#### `build.outputDir`
-
-Output subdirectory for compiled scripts within the behavior pack output.
-
-- Type: `string`
-- Default: `"scripts"`
-
-#### `build.outputFilename`
-
-Override the output filename for the bundled script.
-
-- Type: `string`
-- Default: derived from the entry script name
 
 #### `build.clean`
 

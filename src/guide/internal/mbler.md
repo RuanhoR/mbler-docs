@@ -185,7 +185,8 @@ interface MblerConfigData {
   mcVersion: string;
   outdir?: MblerConfigOutdir;
   script?: MblerConfigScript;
-  minify?: 'oxc' | 'terser' | 'esbuild';
+  minify?: 'oxc' | 'terser' | 'esbuild' | 'none';
+  manifest?: MblerManifestConfig;
   build?: Partial<MblerBuildConfig>;
 }
 ```
@@ -198,7 +199,8 @@ interface MblerConfigData {
 - `mcVersion: string` - Minecraft version (required)
 - `outdir?: MblerConfigOutdir` - Output directory configuration
 - `script?: MblerConfigScript` - Script configuration
-- `minify?: 'oxc' | 'terser' | 'esbuild'` - Minification engine (default: 'oxc')
+- `minify?: 'oxc' | 'terser' | 'esbuild' | 'none'` - Minification engine (default: 'oxc'; `'none'` disables minification)
+- `manifest?: MblerManifestConfig` - Manifest.json generation options (applied to both pack manifests)
 - `build?: Partial<MblerBuildConfig>` - Build configuration
 
 ---
@@ -243,6 +245,53 @@ interface MblerConfigScript {
 
 ---
 
+### Types#MblerManifestConfig
+
+Manifest.json generation options interface. Applied to both the behavior pack and the resource pack manifests; a user-supplied `manifest.json` in the pack source folders is shallow-merged over the generated one. `format_version` is always `2` and not configurable.
+
+```typescript
+interface MblerManifestConfig {
+  pack_scope?: MblerPackScope; // 'any' | 'world' | 'global'
+  platform_locked?: boolean;
+  base_game_version?: string;
+  allow_random_seed?: boolean;
+  lock_template_options?: boolean;
+  capabilities?: MblerManifestCapability[]; // 'chemistry' | 'editorExtension' | 'experimental_custom_ui' | 'pbr' | 'raytraced' | 'script_eval'
+  dependencies?: Array<
+    | { uuid: string; version: string | number[]; name?: string }
+    | { module_name?: string; uuid?: string; version: string }
+  >;
+  subpacks?: Array<{
+    name: string;
+    folder_name: string;
+    memory_tier: number;
+    memory_performance_tier?: number;
+  }>;
+  settings?: Array<
+    | { type: 'label'; text?: string }
+    | { type: 'input'; text?: string; name: string; default?: string }
+    | { type: 'toggle'; text?: string; name: string; default?: boolean }
+    | { type: 'slider'; text?: string; name: string; min?: number; max?: number; step?: number; default?: number }
+    | { type: 'dropdown'; text?: string; name: string; options?: Array<string | { text: string; name: string }>; default?: string }
+  >;
+  metadata?: {
+    authors?: string[];
+    license?: string;
+    url?: string;
+    product_type?: MblerManifestProductType; // 'addon'
+  };
+}
+```
+
+**Notes:**
+
+- `capabilities` — For packs with scripts, `'script_eval'` is added automatically and user values are merged and deduplicated
+- `dependencies` — Appended after the automatically generated Script API dependencies (`@minecraft/server`, plus `@minecraft/server-ui` when `script.ui` is enabled, plus `build.otherDeps`); script module dependency versions may be `'beta'` since Minecraft 1.21.120
+- `metadata.generated_with` — Auto-injected by Mbler as `{ mbler: [version] }` and cannot be overridden
+- Enums exported from `mbler` for TypeScript configs: `MblerPackScope`, `MblerManifestCapability`, `MblerManifestSettingType` (`'label' | 'input' | 'toggle' | 'slider' | 'dropdown'`), `MblerManifestProductType`
+
+---
+
 ### Types#MblerBuildConfig
 
 Build configuration interface.
@@ -255,8 +304,6 @@ interface MblerBuildConfig {
   cachePath: string;
   bundle: boolean;
   clean?: boolean;
-  outputDir: string;
-  outputFilename: string;
   onEnd: (ctx: MblerConfigData) => void | Promise<void>;
   onStart: (ctx: MblerConfigData) => void | Promise<void>;
   onWarn: (ctx: MblerConfigData, warning: Error) => void | Promise<void>;
@@ -270,8 +317,6 @@ interface MblerBuildConfig {
 - `cachePath: string` - Cache file path
 - `bundle: boolean` - Whether to bundle scripts via Rollup (default: true)
 - `clean?: boolean` - Clean output dirs before build (default: true)
-- `outputDir: string` - Output subdirectory (default: 'scripts')
-- `outputFilename: string` - Force output filename
 - `onEnd: (ctx: MblerConfigData) => void | Promise<void>` - Build complete callback
 - `onStart: (ctx: MblerConfigData) => void | Promise<void>` - Build start callback
 - `onWarn: (ctx: MblerConfigData, warning: Error) => void | Promise<void>` - Warning callback
