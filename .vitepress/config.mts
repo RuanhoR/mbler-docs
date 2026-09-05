@@ -29,6 +29,10 @@ export const sidebar: ThemeConfig["sidebar"] = {
           link: "/guide/mcx",
         },
         {
+          text: "ESLint and Vitest Plugins",
+          link: "/guide/plugins",
+        },
+        {
           text: "Vscode Extension",
           link: "/guide/vscode",
         },
