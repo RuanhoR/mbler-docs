@@ -30,13 +30,15 @@ export default [
 | Rule | Default | Description |
 | --- | --- | --- |
 | `mcx/valid-event-binding` | error | `<Event>` bindings must use known `@minecraft/server` world events, and handlers must be exported from `<script>` |
+
+Event names are not hardcoded: at lint time the plugin extracts the `WorldAfterEvents` / `WorldBeforeEvents` property names from the `index.d.ts` of the `@minecraft/server` version **installed in your project**, so the known events always match the version you build against. Results are cached at `<project>/node_modules/.tmp/eslint-plugin-mcx/events-<version>.json` and regenerated when the version changes; if `@minecraft/server` cannot be resolved, the plugin falls back to a bundled list. Bindings are validated against the list matching the tag's `@after` / `@before` scope.
 | `mcx/no-duplicate-root-tag` | error | `App` / `Event` / `Ui` / `Form` / `script` may appear only once per file (configurable via `unique`) |
 | `mcx/valid-prop-value` | error | prop values that look like JSON objects/arrays must parse as JSON |
 | `mcx/require-script-lang` | warn | `<script>` must declare its language (`lang="ts"`) |
 
 ### Rule options
 
-- `valid-event-binding`: `{ allowUnknown?: boolean, extraEvents?: string[], ignoreKeys?: string[] }`. `McxExtendsBy` and other `Mcx*` compiler directives are always allowed.
+- `valid-event-binding`: `{ allowUnknown?: boolean, extraEvents?: string[], ignoreKeys?: string[] }`. `McxExtendsBy` and other `Mcx*` compiler directives are always allowed. Event names are validated against the list matching the tag's `@after`/`@before` scope; without a scope attribute an event from either list is accepted.
 - `no-duplicate-root-tag`: `{ unique?: string[] }` (default `['App', 'Event', 'Ui', 'Form', 'script']`).
 - `require-script-lang`: `{ allow?: string[] }` (default `['ts']`).
 
