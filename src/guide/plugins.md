@@ -3,7 +3,7 @@
 The mbler toolchain ships two official plugins for `.mcx` files — one for linting, one for unit testing:
 
 - **[`@mbler/eslint-plugin-mcx`](https://www.npmjs.com/package/@mbler/eslint-plugin-mcx)** — an ESLint parser + rules that lints `.mcx` files directly
-- **[`@mbler/vite-plugin-mcx`](https://www.npmjs.com/package/@mbler/vite-plugin-mcx)** — a Vite/Vitest plugin that lets tests `import` compiled `.mcx` modules
+- **a Vitest plugin** — built into `@mbler/mcx-core` (the `vitePlugin` export), letting tests `import` compiled `.mcx` modules with no extra install
 
 ## ESLint Plugin
 
@@ -62,7 +62,7 @@ export default [
 
 ## Vitest Plugin
 
-`@mbler/vite-plugin-mcx` wraps `@mbler/mcx-core`'s `rollupPlugin` without modifying core:
+`@mbler/mcx-core` exports `vitePlugin` directly (wrapping its own `rollupPlugin`, without modifying core):
 
 - only `.mcx` modules go through the inner transform, so `.ts` files and images keep using Vite's own esbuild/asset pipeline;
 - `resolveId` failures fall through to the host resolver instead of throwing (bare ids still resolve against `moduleDir`);
@@ -72,7 +72,6 @@ export default [
 ### Install
 
 ```bash
-pnpm add -D @mbler/vite-plugin-mcx
 ```
 
 ### Configuration
@@ -81,11 +80,11 @@ pnpm add -D @mbler/vite-plugin-mcx
 // vitest.config.ts
 import ts from "typescript";
 import { defineConfig } from "vitest/config";
-import { mcxPlugin } from "@mbler/vite-plugin-mcx";
+import { vitePlugin } from "@mbler/mcx-core";
 
 export default defineConfig({
   plugins: [
-    mcxPlugin(
+    vitePlugin(
       {
         moduleDir: "behavior/modules", // where bare ids like @mbler/mcx resolve
         tsconfigPath: "tsconfig.json",
