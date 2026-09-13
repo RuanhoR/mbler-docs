@@ -33,6 +33,10 @@ export const sidebar: ThemeConfig["sidebar"] = {
           link: "/guide/plugins",
         },
         {
+          text: "Recommended Tooling",
+          link: "/guide/tooling",
+        },
+        {
           text: "Vscode Extension",
           link: "/guide/vscode",
         },
