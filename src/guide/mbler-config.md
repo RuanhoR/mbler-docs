@@ -168,6 +168,31 @@ Minification engine for bundled script output.
 - Set to a specific engine name (`'oxc'`, `'terser'`, `'esbuild'`) to choose a particular minifier.
 - Set to `'none'` to disable script minification entirely — the output stays readable.
 
+### `mcxPlugin`
+
+Compiler plugins for `script.lang: "mcx"` projects. A plugin is a plain object with a `name` and hooks
+(`onTransform`, `onTransformed`, `onThrow`, `tags`, `onBuildStart` / `onBuildEnd`); pass one plugin, a
+factory, or an array of them.
+
+- Type: `McxPlugin | (() => McxPlugin) | Array<McxPlugin | (() => McxPlugin)>`
+- Default: `undefined` (the built-in compiler only, output is byte-for-byte unchanged)
+
+```js
+import jsonui from "@mbler/mcx-plugin-jsonui";
+
+export default defineConfig({
+  // ...
+  mcxPlugin: [jsonui()],
+});
+```
+
+Plugins run in array order. See [MCX Compiler Plugins](./mcx-plugin) for the hook API and
+[JSON UI Plugin](./jsonui) for the official plugin.
+
+::: tip
+`mcxPlugin` only applies to `script.lang: "mcx"`. It is ignored for `ts` / `js` projects.
+:::
+
 ### `build`
 
 Advanced build configuration.

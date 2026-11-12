@@ -58,6 +58,10 @@ Build in-game forms with two modes:
 - **`<Ui>`** — CustomForm (reactive, Observable bindings). Requires `@minecraft/server-ui` >= 2.1.
 - **`<Form>`** — Legacy FormData (ModalFormData / ActionFormData / MessageFormData). Works on any version.
 
+::: tip
+With `type="jsonui"`, `<Ui>` is no longer compiled into a form — the [JSON UI plugin](./jsonui) turns it into vanilla UI resource files (HUD patches, server form screens, custom screens) instead.
+:::
+
 #### Available Tags
 
 Tags map to the underlying Minecraft form API methods:

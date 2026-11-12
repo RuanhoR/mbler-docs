@@ -37,6 +37,14 @@ export const sidebar: ThemeConfig["sidebar"] = {
           link: "/guide/tooling",
         },
         {
+          text: "MCX Compiler Plugins",
+          link: "/guide/mcx-plugin",
+        },
+        {
+          text: "JSON UI Plugin",
+          link: "/guide/jsonui",
+        },
+        {
           text: "Vscode Extension",
           link: "/guide/vscode",
         },

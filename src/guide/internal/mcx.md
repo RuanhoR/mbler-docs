@@ -30,6 +30,9 @@ import {
   compile_component, // compileComponent, RunScript, FilePoint helpers
   rollupPlugin,      // Rollup plugin factory
   rolldownPlugin,    // Rolldown plugin factory
+  // Compiler plugin API:
+  defineMcxPlugin,   // typed identity helper for plugin authors
+  resolveMcxPlugins, // resolve CompileOpt.mcxPlugin into an ordered list
   // Component classes (re-exported from @mbler/mcx-component):
   ItemComponent,
   BlockComponent,
@@ -277,6 +280,31 @@ async function transform(
 
 **Return Value:**
 - `Promise<string>` - Transformed JavaScript code
+
+---
+
+### defineMcxPlugin / resolveMcxPlugins
+
+Compiler plugin runtime. `CompileOpt.mcxPlugin` accepts a plugin object, a factory, or arrays of
+either; `resolveMcxPlugins` flattens the value, calls factories (in declaration order) and validates
+that every entry has a non-empty `name`.
+
+```typescript
+function defineMcxPlugin(plugin: McxPlugin): McxPlugin;
+function resolveMcxPlugins(opt: CompileOpt): McxPlugin[];
+```
+
+Hook execution order per `.mcx` file:
+
+1. `tags` / `registerTag` handlers are collected;
+2. `onTransform` — the first hook returning a string replaces the whole module (and skips step 3);
+3. built-in transform;
+4. `onTransformed` — chained across plugins;
+5. injections from `addImport` / `addStatement` / `addExport` / `setType` are applied with Babel.
+
+Errors from steps 2–3 are passed to `onThrow`; a string return recovers the file. `onBuildStart` /
+`onBuildEnd` are forwarded by `rollupPlugin`, `rolldownPlugin` and `vitePlugin`.
+See [MCX Compiler Plugins](../mcx-plugin) for the user-facing API.
 
 ---
 
