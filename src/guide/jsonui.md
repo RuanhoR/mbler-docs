@@ -130,6 +130,51 @@ export default jsonui({ availabilities: [myScreen] });
 
 Plugin options: `availability`, `namespace`, `uiDir` (default `ui`), `formMarker` (default `mbler_ui:`), `saveRaw`, `resourcesDir` (override the output dir) and `availabilities`.
 
+## Preview
+
+The plugin ships a preview server so you can see a screen without launching the game:
+
+```bash
+pnpm mcx-plugin-jsonui preview                        # current project → http://127.0.0.1:5174
+pnpm mcx-plugin-jsonui preview ./src/ui --port 6000 --host 0.0.0.0
+```
+
+| Flag                     | Description                                      |
+| ------------------------ | ------------------------------------------------ |
+| `-p, --port <port>`      | port to listen on, default `5174`                |
+| `-H, --host <host>`      | host to bind, default `127.0.0.1`                |
+| `-s, --size <WxH>`       | logical canvas size, default `960x540`           |
+| `-w, --watch`            | watch the project and hot reload (default on)    |
+| `--no-watch`             | disable the file watcher                         |
+| `-o, --open`             | open the browser (default on)                    |
+| `--no-open`              | do not open the browser                          |
+
+Every `<Ui type="jsonui">` file in the project shows up in the left tree; clicking one renders the compiled document with the same rules the game uses — anchors, `%` / `px` / `%x` lengths, `stack_panel`, `grid`, `$variables` and `#bindings` — and the page hot reloads when you save a file. Textures are resolved from the resource packs found in the project.
+
+Attribute values that look like JSON but do not parse (`size="[100%,100%]"` without quotes) are listed as warnings: the game drops them too, which usually shows up as a 0×0 control.
+
+### Screenshot API
+
+The same renderer is exposed over HTTP for tooling — CI snapshots, or an agent debugging a layout. Images are computed in-process: no browser, no native image library.
+
+```bash
+GET /api/screenshot?id=src/ui/shop.mcx&format=png&scale=2&bg=dark
+GET /api/screenshot?id=src/ui/shop.mcx&format=svg
+GET /api/screens            # file tree, metadata, warnings
+GET /api/screen?id=...      # compiled JSON UI document
+```
+
+| Query      | Description                                                          |
+| ---------- | -------------------------------------------------------------------- |
+| `id`       | screen id (path relative to the project root), defaults to the first |
+| `format`   | `png` (default) or `svg`                                             |
+| `scale`    | pixel density 0.25–8, default `1`                                     |
+| `w`, `h`   | canvas size, defaults to the server canvas                           |
+| `bg`       | `dark` (default), `checker` or `transparent`                          |
+| `download` | `1` adds a `Content-Disposition` filename                             |
+
+PNG is rasterised by the plugin itself: geometry matches the browser preview exactly, text uses a built-in 5×7 pixel font (Latin; lowercase folds to uppercase, unknown glyphs become a box) and images are drawn as placeholders. Request `format=svg` when you need real font rendering and embedded textures.
+
 ## The compiled module
 
 The generated `.mcx` module exports a descriptor object, the `JSONUIComponent` class and an instance:
