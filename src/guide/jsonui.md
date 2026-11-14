@@ -151,6 +151,8 @@ pnpm mcx-plugin-jsonui preview ./src/ui --port 6000 --host 0.0.0.0
 
 Every `<Ui type="jsonui">` file in the project shows up in the left tree; clicking one renders the compiled document with the same rules the game uses — anchors, `%` / `px` / `%x` lengths, `stack_panel`, `grid`, `$variables` and `#bindings` — and the page hot reloads when you save a file. Textures are resolved from the resource packs found in the project.
 
+Text is laid out and drawn with the game's calibrated font metrics (real-device measurements ported from the CUI framework): ASCII runs use the Minecraft default widths, any non-ASCII run uses Unifont at half-pixel precision, labels wrap at spaces the way the game does, `keep_ratio` scales images to fit, and `§` format codes render with their Bedrock colors. For pixel-accurate glyphs the server fetches the Unifont bitmap file once (≈1.6 MB, GPLv2+/OFL) from a GNU mirror into `~/.mcx/fonts/` — set `MCX_UNIFONT` to a local `unifont.hex[.gz]` to skip the download; without font data the preview falls back to system fonts.
+
 Attribute values that look like JSON but do not parse (`size="[100%,100%]"` without quotes) are listed as warnings: the game drops them too, which usually shows up as a 0×0 control.
 
 ### Screenshot API
