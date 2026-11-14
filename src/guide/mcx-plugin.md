@@ -141,6 +141,45 @@ A plugin returned from a factory keeps its own state, so calling `jsonui()` per 
 - `onBuildStart` — clear caches, reset counters;
 - `onBuildEnd` — flush aggregated files (that is where the JSON UI plugin writes `ui/_ui_defs.json`).
 
+## Editor completion
+
+A plugin can describe its tags so the MCX language server completes them like the built-in DSL:
+
+```ts
+export default defineMcxPlugin({
+  name: "layout",
+  completion: {
+    name: "layout", // contributor id
+    rootTags: ["Layout"], // offered at the top level of a .mcx file
+    attributeSets: {
+      "layout-root": [{ name: "size", detail: "Panel size" }],
+    },
+    tags: [
+      {
+        name: "Layout",
+        detail: "Layout root",
+        container: true,
+        extends: ["layout-root"],
+        children: ["Row", "Column"],
+      },
+      { name: "Row", detail: "Row container", extends: ["layout-root"] },
+    ],
+  },
+});
+```
+
+| Field            | Description                                                                 |
+| ---------------- | --------------------------------------------------------------------------- |
+| `name`           | contributor id, normally the plugin package name                            |
+| `rootTags`       | tags offered when the file has no enclosing tag                             |
+| `tags[].children`| tags suggested inside this tag                                              |
+| `tags[].attributes` | attributes with `detail`, `insertText` and `values`                      |
+| `tags[].extends` | other tags or `attributeSets` keys whose attributes are inherited           |
+| `tags[].container` | keep "child of" context on the next line while typing                     |
+| `values`         | enum completion inside `attr="…"`, e.g. `availability`                      |
+
+mbler collects every configured plugin's `completion` into `.mbler/mcx-completion.json` during a build, and the language server merges it over its built-in tables. The VS Code extension picks the file up as soon as it changes, and removing a plugin removes the generated file, so stale completions disappear too.
+
 ## Using plugins in tests
 
 `vitePlugin` accepts the same `mcxPlugin` field, so unit tests can compile `.mcx` files with plugins enabled:

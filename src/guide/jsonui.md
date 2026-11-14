@@ -1,5 +1,7 @@
 # JSON UI Plugin
 
+[![npm](https://img.shields.io/npm/v/@mbler/mcx-plugin-jsonui?label=npm)](https://www.npmjs.com/package/@mbler/mcx-plugin-jsonui)
+
 `@mbler/mcx-plugin-jsonui` turns `<Ui type="jsonui">` into real [JSON UI](https://mcbeui.netlify.app/) resource files, so a `.mcx` file can patch the vanilla UI — HUD elements, server form screens, or whole custom screens — instead of only building SAPI forms.
 
 The plugin is built on [MCX compiler plugins](./mcx-plugin) and never touches the built-in `<Ui>` / `<Form>` form compiler:
@@ -12,8 +14,14 @@ Any attribute you put on `<Ui>` (other than the reserved ones below) is written 
 ## Install
 
 ```bash
-pnpm add -D @mbler/mcx-plugin-jsonui
+# 0.0.1 is a preview, install it through the alpha tag
+pnpm add -D @mbler/mcx-plugin-jsonui@alpha
+
+# runtime helpers used from <script> (Molang bindings, JSONUIComponent types)
+pnpm add @mbler/mcx-component
 ```
+
+Package: <https://www.npmjs.com/package/@mbler/mcx-plugin-jsonui>
 
 ```js
 // mbler.config.js
@@ -76,7 +84,7 @@ Child tags use their `id` / `name` attribute as the control name and their `type
 
 ### `server_form`
 
-Uses the "Modifying Server Forms" routing from the Bedrock Wiki (the same model as sapdon): a gated factory is inserted into `main_screen_content` pointing at `@<namespace>.root`, and `long_form` hides the native form by title prefix. On the script side, use `getFormTitle()` as the `ActionFormData` title:
+Uses the "Modifying Server Forms" routing from the Bedrock Wiki: a gated factory is inserted into `main_screen_content` pointing at `@<namespace>.root`, and `long_form` hides the native form by title prefix. On the script side, use `getFormTitle()` as the `ActionFormData` title:
 
 ```js
 // behavior/scripts/index.ts
@@ -143,6 +151,78 @@ import shop from "./shop.mcx";
 
 new ActionFormData().title(shop.jsonui.getFormTitle()).body("...").show(player);
 ```
+
+## Bindings from `<script>` (Molang)
+
+A JSON UI screen is only static markup until its controls are bound to data. `<script>` code in a jsonui file runs inside the generated module, so it can reach `jsonui` and shape the document at load time. Bindings are built with `Molang` from `@mbler/mcx-component`:
+
+```ts
+import { Molang } from "@mbler/mcx-component";
+
+// query.get_health / 20 * 100 -> the label text
+jsonui.text("hp", Molang.query("get_health").div(20).mul(100));
+
+// show the warning only below 25%
+jsonui.visible(
+  "low_hp",
+  Molang.query("get_health").lt(5),
+  "always_when_visible",
+);
+
+// explicit binding object
+jsonui.bind("title", Molang.bind.view(Molang.variable("#text"), "#label"));
+```
+
+`Molang` is a small builder — every operator returns a new expression, so long conditions stay readable:
+
+| Helper | Renders as |
+| --- | --- |
+| `Molang.query("get_health")` | `query.get_health` |
+| `Molang.variable("#text")` / `Molang.variable("$score")` | `#text` / `$score` |
+| `Molang.context("hud_title_text_string")` | `context.hud_title_text_string` |
+| `Molang.math("clamp", x, 0, 100)` | `math.clamp(x, 0, 100)` |
+| `Molang.when(cond, a, b)` | `(cond ? a : b)` |
+| `Molang.string("HP: ")` | `'HP: '` |
+| `expr.add / sub / mul / div / mod` | `(a + b)` … |
+| `expr.gt / gte / lt / lte / eq / neq` | `(a > b)` … |
+| `expr.and / or / not / neg` | `(a && b)` … |
+
+Bindings themselves come from `Molang.bind`:
+
+```ts
+Molang.bind.view(source, "#text"); // binding_type: 'view'
+Molang.bind.global(source, "#visible"); // binding_type: 'global'
+Molang.bind.collection(source, "#text", "shop_items"); // inside a collection
+Molang.bind.of({ source, target: "#alpha", condition: "always" }); // any field
+```
+
+`toJSON()` returns the object JSON UI expects (`binding_type`, `binding_condition`, `source_property_name`, `target_property_name`, …), so it can be pushed into `bindings` directly.
+
+## Runtime control helpers
+
+`JSONUIComponent` (the `jsonui` instance) has helpers for the rest of the document, so a screen is not limited to the controls declared in the template:
+
+| Method | What it does |
+| --- | --- |
+| `bind(id, binding, { create?, replace? })` / `addBinding(...)` | append one binding (or an array) to a control |
+| `setBindings(id, bindings)` / `clearBindings(id)` | replace / remove bindings |
+| `text(id, expr)` / `visible(id, expr)` | `#text` and `#visible` shortcuts |
+| `addControl(parentId, id, element)` | declare a control at runtime, e.g. rows of a list |
+| `removeControl(parentId, id)` | drop a control from its parent |
+| `findElement(id)` / `getBindings(id)` | read the document (nested controls included) |
+
+`bind()` throws for an unknown id unless `{ create: true }` is passed, which declares a `panel` with that id — handy when a script builds rows dynamically:
+
+```ts
+jsonui.bind("rows", Molang.bind.view("#text", "#text"), { create: true });
+for (const item of items) {
+  jsonui.addControl("rows", item.id, { type: "label", text: item.name });
+}
+```
+
+::: tip
+The script block shares the module scope with the generated document, so named exports work (`export function open(player) {}`) but `export default` is reserved for the jsonui descriptor — the plugin reports a compile error if you use it.
+:::
 
 ## Files without `<script>`
 
